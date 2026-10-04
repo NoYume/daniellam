@@ -1,8 +1,10 @@
-# Brainstorm companion mockups and stand-in media (local only)
+# Claude files stay local, never in the repo: project notes, settings,
+# brainstorm mockups and stand-in media, and the design spec and plans
+CLAUDE.md
+CLAUDE.local.md
+.claude/
 .superpowers/
-
-# Local Claude Code settings
-.claude/settings.local.json
+docs/superpowers/
 
 # macOS
 .DS_Store
