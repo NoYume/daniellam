@@ -1,0 +1,8 @@
+# Brainstorm companion mockups and stand-in media (local only)
+.superpowers/
+
+# Local Claude Code settings
+.claude/settings.local.json
+
+# macOS
+.DS_Store
