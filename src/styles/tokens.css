@@ -38,10 +38,12 @@ html[data-mode='light'] {
   --muted: #676b73;
   --faint: #92969d;
   --hi: #121316;
-  --acc: #3e5f8a;
-  --g1: #22334d;
-  --g2: #3e5f8a;
-  --g3: #7e9cc2;
+  /* Cobalt. The line art runs from cobalt mixed 55% with black to cobalt
+     mixed 45% with white (in oklab), as Chrome drew them in the color test. */
+  --acc: #0047ab;
+  --g1: #011a4b;
+  --g2: #0047ab;
+  --g3: #8faddd;
   --pg-body: #3b3f46;
   --pg-belly: #ffffff;
   --pg-beak: #8f8676;
@@ -62,10 +64,10 @@ html[data-mode='light'] {
     --muted: #676b73;
     --faint: #92969d;
     --hi: #121316;
-    --acc: #3e5f8a;
-    --g1: #22334d;
-    --g2: #3e5f8a;
-    --g3: #7e9cc2;
+    --acc: #0047ab;
+    --g1: #011a4b;
+    --g2: #0047ab;
+    --g3: #8faddd;
     --pg-body: #3b3f46;
     --pg-belly: #ffffff;
     --pg-beak: #8f8676;

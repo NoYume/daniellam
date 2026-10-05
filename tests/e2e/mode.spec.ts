@@ -102,7 +102,8 @@ const TOKENS = {
   light: {
     '--bg': '#f3f3f1', '--surface': '#e9eae8', '--stripe': '#e1e2e0', '--line': '#dadbda', '--line-2': '#c9cbcb',
     '--text': '#141518', '--text-2': '#383b40', '--muted': '#676b73', '--faint': '#92969d', '--hi': '#121316',
-    '--acc': '#3e5f8a', '--g1': '#22334d', '--g2': '#3e5f8a', '--g3': '#7e9cc2',
+    // Cobalt, Daniel's pick from the light-mode color test, in place of denim.
+    '--acc': '#0047ab', '--g1': '#011a4b', '--g2': '#0047ab', '--g3': '#8faddd',
     '--pg-body': '#3b3f46', '--pg-belly': '#ffffff', '--pg-beak': '#8f8676',
   },
 };
