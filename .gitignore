@@ -24,3 +24,7 @@ public/apple-touch-icon.png
 test-results/
 playwright-report/
 .lighthouseci/
+
+# Original photos waiting to be added. They can carry the place they were
+# taken (GPS); only `bun run photo` copies, stripped of metadata, are committed.
+photos/

@@ -62,3 +62,10 @@ test('cli rejects an unknown folder', async () => {
   expect(run.exitCode).not.toBe(0);
   expect(existsSync(join(dir, 'src/assets/public'))).toBe(false);
 });
+
+test('originals dropped in photos/ are never committed', () => {
+  // They still carry their metadata, GPS included; only `bun run photo` copies reach src/assets.
+  for (const path of ['photos/hero/night/a.jpg', 'photos/hero/day/a.png', 'photos/shots/a.jpg', 'photos/README.md']) {
+    expect(Bun.spawnSync(['git', 'check-ignore', '-q', path]).exitCode, `${path} is not ignored`).toBe(0);
+  }
+});
