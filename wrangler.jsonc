@@ -1,0 +1,9 @@
+// Cloudflare Workers Builds settings: build command `bun run build`, deploy
+// command `bunx wrangler deploy`, non-production branch deploy command
+// `bunx wrangler versions upload`. Build variables: BUN_VERSION=1.4.2, and
+// SITE_URL set to the site's address (the build stops without it).
+{
+  "name": "daniellam",
+  "compatibility_date": "2026-10-04",
+  "assets": { "directory": "./dist", "not_found_handling": "404-page" }
+}

@@ -1,0 +1,39 @@
+{
+  "name": "daniellam",
+  "type": "module",
+  "private": true,
+  "packageManager": "bun@1.4.2",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "bun run check:content && bun run fonts && bun run bake && bun run og && astro dev",
+    "build": "bun run check:content && bun run fonts && bun run bake && bun run og && astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "bun test tests/unit",
+    "e2e": "playwright test",
+    "photo": "bun scripts/photo.ts",
+    "bake": "bun scripts/hero-bake.ts",
+    "check:content": "bun scripts/check-content.ts",
+    "fonts": "bun scripts/fonts-cjk.ts",
+    "og": "bun scripts/og.ts"
+  },
+  "dependencies": {
+    "@astrojs/markdown-satteri": "^0.4.2",
+    "@astrojs/sitemap": "^3.7.4",
+    "@phosphor-icons/core": "^2.1.1",
+    "astro": "7.3.5",
+    "satori": "^0.35.0",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@axe-core/playwright": "^4.13.0",
+    "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.63.0",
+    "@types/bun": "^1.4.2",
+    "typescript": "^6",
+    "wrangler": "^4.147.0"
+  }
+}

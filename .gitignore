@@ -8,3 +8,19 @@ docs/superpowers/
 
 # macOS
 .DS_Store
+
+# Dependencies and build output
+node_modules/
+dist/
+.astro/
+.wrangler/
+
+# Generated at build time
+src/generated/
+public/og.png
+public/apple-touch-icon.png
+
+# Test output
+test-results/
+playwright-report/
+.lighthouseci/
