@@ -1,0 +1,20 @@
+# Site-wide details: the hero's education line, About's role lines, contact
+# links and section subtitles. Add `scholar:` under links once there is a profile.
+# The résumé link expects the PDF at public/daniel-lam-resume.pdf.
+site:
+  name: Daniel Lam
+  educationLine: Computer Science, The University of Texas at Austin. BS expected May 2028.
+  roleLines:
+    - Computer Science, UT Austin, May 2028
+    - Research Assistant, RobIn Lab
+  email: daniel.wingchi.lam@gmail.com
+  links:
+    github: https://github.com/NoYume
+    linkedin: https://www.linkedin.com/in/danielwlam
+    resume: /daniel-lam-resume.pdf
+  subtitles:
+    research: Robot manipulation safety, simulation, and perception.
+    experience: Production AI at Salesforce and Lockheed Martin, research at UT Austin.
+    projects: Things I built on my own time.
+    shots: Travel and everyday photos.
+  description: Computer science at UT Austin, focused on AI and robotics. Research at the RobIn Lab, AI engineering at Salesforce and Lockheed Martin.

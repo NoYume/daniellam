@@ -1,0 +1,23 @@
+# Photos for the Shots row (teaser: true) and, later, the Shots page.
+# Add a photo with `bun run photo <file> shots`. Set `mine: true` on your own
+# photos; anyone else's need a `credit`. These four are credited stand-ins.
+- id: n12
+  file: ../assets/shots/n12.jpg
+  alt: Station platform at dusk
+  credit: taro ohtani
+  teaser: true
+- id: p1047
+  file: ../assets/shots/p1047.jpg
+  alt: Brick alley
+  credit: sergee bee
+  teaser: true
+- id: n11
+  file: ../assets/shots/n11.jpg
+  alt: Rainy alley in Shinjuku
+  credit: Intrepid (@intrepidfilm)
+  teaser: true
+- id: p1050
+  file: ../assets/shots/p1050.jpg
+  alt: Coastline
+  credit: Joseph Barrientos
+  teaser: true

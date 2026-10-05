@@ -1,0 +1,15 @@
+- id: coding-research-agent
+  name: Coding Research Agent
+  description: A CLI agent that finds, compares, and analyzes developer tools.
+  tech: [LangGraph, Claude API, Firecrawl, MCP]
+  year: 2025
+- id: choose-your-adventure
+  name: Choose Your Adventure
+  description: An AI story generator with branching narratives and async job processing.
+  tech: [React, FastAPI, PostgreSQL, Claude API]
+  year: 2025
+- id: email-automation
+  name: Email automation on GCP
+  description: A serverless pipeline that replaced manual data entry for 60+ new member signups.
+  tech: [Cloud Run Jobs, Cloud Scheduler, Sheets API, GitHub Actions]
+  year: 2025

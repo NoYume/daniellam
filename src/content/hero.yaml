@@ -1,0 +1,89 @@
+# Hero photos. Night photos show in dark mode with the Blue Hour film; day
+# photos show in light mode with the smart casual film. Each visit picks one
+# at random from its mode's set. Add a photo with `bun run photo <file> hero`.
+# These are credited stand-ins from Unsplash until Daniel's own photos are ready.
+# The first night photo is also the link preview's background. The browser
+# tests expect the first photo of each set, so if that changes, update
+# tests/e2e/fixtures.ts to match.
+
+- id: n1
+  file: src/assets/hero/n1.jpg
+  set: night
+  place: Shinjuku, Tokyo
+  photographer: Pema G. Lama
+  alt: Shinjuku street at night in the rain, lined with lit signs
+
+- id: n10
+  file: src/assets/hero/n10.jpg
+  set: night
+  place: Hong Kong
+  photographer: Nic Low
+  alt: Neon signs over a wet Hong Kong street at night
+
+- id: n8
+  file: src/assets/hero/n8.jpg
+  set: night
+  place: Shanghai, from a bus window
+  photographer: Phykro Lee
+  alt: City lights through a rainy bus window in Shanghai
+
+- id: n2
+  file: src/assets/hero/n2.jpg
+  set: night
+  place: Mong Kok, Hong Kong
+  photographer: Anastasia Zanko
+  alt: Red minibuses on a busy Mong Kok street at night
+
+- id: n12
+  file: src/assets/hero/n12.jpg
+  set: night
+  place: Ochanomizu, Tokyo
+  photographer: taro ohtani
+  alt: Ochanomizu Station platform at dusk
+
+- id: n5
+  file: src/assets/hero/n5.jpg
+  set: night
+  place: Shanghai
+  photographer: Zhou Xian
+  alt: Shanghai towers lit up at night
+
+- id: u7
+  file: src/assets/hero/u7.jpg
+  set: day
+  place: Tokyo, Japan
+  photographer: Emil Karlsson
+  alt: A quiet Tokyo side street with power lines and brick houses
+
+- id: p1076
+  file: src/assets/hero/p1076.jpg
+  set: day
+  photographer: Samuel Zeller
+  alt: Looking up at a modern building's facade
+
+- id: u6
+  file: src/assets/hero/u6.jpg
+  set: day
+  place: Tokyo, Japan
+  photographer: Shunya Koide
+  alt: Looking up at Tokyo towers
+
+- id: u13
+  file: src/assets/hero/u13.jpg
+  set: day
+  place: Tokyo, Japan
+  photographer: Tsuyoshi Kozu
+  alt: An overcast residential street in Tokyo
+
+- id: p1067
+  file: src/assets/hero/p1067.jpg
+  set: day
+  place: Chicago, Illinois
+  photographer: Kevin Young
+  alt: Chicago skyline from above at sunset
+
+- id: p1047
+  file: src/assets/hero/p1047.jpg
+  set: day
+  photographer: sergee bee
+  alt: A narrow brick alley with fire escapes
