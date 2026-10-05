@@ -1,0 +1,5 @@
+- id: a
+  file: src/assets/hero/a.jpg
+  set: night
+  photographer: Someone
+  alt: A street at night

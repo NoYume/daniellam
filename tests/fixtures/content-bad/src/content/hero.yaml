@@ -1,0 +1,9 @@
+- id: fine
+  file: src/assets/hero/fine.jpg
+  set: day
+  photographer: Someone
+  alt: A street by day
+- id: no-alt
+  file: src/assets/hero/no-alt.jpg
+  set: night
+  photographer: Someone

@@ -1,0 +1,8 @@
+- id: mine
+  file: ../assets/shots/clean.jpg
+  alt: A street
+  mine: true
+- id: theirs
+  file: ../assets/shots/clean.jpg
+  alt: A coast
+  credit: Someone Else
