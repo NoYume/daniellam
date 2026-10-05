@@ -1,0 +1,259 @@
+---
+import { getImage } from 'astro:assets';
+import { getCollection, getEntry } from 'astro:content';
+import Authors from './Authors.astro';
+import LineArt from './LineArt.astro';
+import Publications from './Publications.astro';
+import SectionTitle from './SectionTitle.astro';
+
+const site = (await getEntry('site', 'site'))!.data;
+const entries = (await getCollection('research')).sort((a, b) => a.data.order - b.data.order);
+// Video media (Task 19): the poster shows until the video plays.
+const posters = await Promise.all(
+  entries.map(({ data }) => ('video' in data.media ? getImage({ src: data.media.poster, format: 'webp', width: 1080 }) : null)),
+);
+const LINKS = [
+  ['paper', 'Paper'],
+  ['website', 'Website'],
+  ['code', 'Code'],
+] as const;
+---
+
+<section id="research">
+  <div class="wrap">
+    <SectionTitle zh="研究" title="Research" />
+    <p class="sec-sub">{site.subtitles.research}</p>
+    <div class="rs">
+      <div class="rs-sticky">
+        <div class="rs-media" id="rsMedia">
+          {
+            entries.map(({ data }, i) => (
+              <div class:list={['rs-item', { on: i === 0 }]} data-cap={data.media.caption}>
+                {'art' in data.media ? (
+                  <LineArt kind={data.media.art} uid={`rs-${i}`} />
+                ) : (
+                  <video src={data.media.video} poster={posters[i]?.src} muted loop playsinline preload="none" />
+                )}
+              </div>
+            ))
+          }
+        </div>
+        <p class="rs-cap" id="rsCap">{entries[0]?.data.media.caption}</p>
+      </div>
+      <div>
+        {
+          entries.map(({ data }, i) => (
+            <article class="rs-entry" data-media={i}>
+              <figure class="entry-media">
+                <div class="entry-frame">
+                  {'art' in data.media ? (
+                    <LineArt kind={data.media.art} uid={`rs-inline-${i}`} />
+                  ) : (
+                    <video src={data.media.video} poster={posters[i]?.src} muted loop playsinline preload="none" />
+                  )}
+                </div>
+                <figcaption class="entry-cap">{data.media.caption}</figcaption>
+              </figure>
+              <div class="rs-tags">
+                <b>{data.tag}</b>
+                <span>{data.kind}</span>
+              </div>
+              <h3 class="rs-title">{data.title}</h3>
+              {data.authors && <p class="rs-authors"><Authors authors={data.authors} /></p>}
+              <p class="rs-desc">{data.summary}</p>
+              {data.myPart && (
+                <p class="rs-role">
+                  <span>My part</span>
+                  {data.myPart}
+                </p>
+              )}
+              {LINKS.some(([key]) => data.links?.[key]) && (
+                <div class="rs-links">
+                  {LINKS.filter(([key]) => data.links?.[key]).map(([key, label]) => (
+                    <a class="lt" href={data.links![key]}>
+                      {label} ↗
+                    </a>
+                  ))}
+                </div>
+              )}
+            </article>
+          ))
+        }
+      </div>
+    </div>
+    <Publications entries={entries} />
+  </div>
+</section>
+
+<script>
+  import { initPinned } from '../scripts/pinned';
+  initPinned({ entries: '.rs-entry', panel: '#rsMedia', key: 'media', caption: '#rsCap' });
+</script>
+
+<style>
+  /* Pinned media on the left; it crossfades to the entry crossing the middle. */
+  .rs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(40px, 5vw, 88px);
+    align-items: start;
+  }
+  .rs-sticky {
+    position: sticky;
+    top: 15vh;
+  }
+  .rs-media {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    max-height: 66vh;
+    width: 100%;
+    border-radius: var(--r);
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+  .rs-item {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  .rs-item.on {
+    opacity: 1;
+  }
+  .rs-item > :global(*) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .rs-item :global(svg) {
+    padding: 8%;
+  }
+  .rs-item :global(svg .la-base) {
+    stroke-opacity: calc(var(--base-op) + 0.14);
+  }
+  .rs-cap {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 14px;
+    min-height: 1.4em;
+  }
+  .rs-entry {
+    min-height: 80vh;
+    padding: 6vh 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .rs-tags {
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+    display: flex;
+    gap: 18px;
+  }
+  .rs-tags b {
+    color: var(--acc);
+    font-weight: 500;
+  }
+  .rs-title {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    letter-spacing: -0.012em;
+    font-size: clamp(28px, 2.5vw, 38px);
+    line-height: 1.18;
+    margin-bottom: 16px;
+  }
+  .rs-authors {
+    font-size: 17px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .rs-authors :global(b) {
+    color: var(--hi);
+    font-weight: 600;
+    box-shadow: inset 0 -2px 0 var(--acc);
+  }
+  .rs-desc {
+    font-size: 20px;
+    color: var(--text-2);
+    line-height: 1.62;
+    margin-bottom: 20px;
+    max-width: 54ch;
+  }
+  .rs-role {
+    font-size: 18.5px;
+    color: var(--text);
+    border-left: 2px solid var(--acc);
+    padding: 2px 0 2px 18px;
+    margin-bottom: 26px;
+    max-width: 54ch;
+  }
+  .rs-role span {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .rs-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    font-family: var(--font-mono);
+    font-size: 14.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  /* Phones (spec 9): each entry shows its own media above its text, and the pinned panel goes. */
+  .entry-media {
+    display: none;
+  }
+  @media (max-width: 900px) {
+    .rs {
+      grid-template-columns: 1fr;
+    }
+    .rs-sticky {
+      display: none;
+    }
+    .rs-entry {
+      min-height: auto;
+      padding: 40px 0;
+    }
+    .entry-media {
+      display: block;
+      margin-bottom: 26px;
+    }
+    .entry-frame {
+      aspect-ratio: 1 / 1;
+      border-radius: var(--r);
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--line);
+    }
+    .entry-frame > :global(*) {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .entry-frame :global(svg) {
+      padding: 8%;
+    }
+    .entry-frame :global(svg .la-base) {
+      stroke-opacity: calc(var(--base-op) + 0.14);
+    }
+    .entry-cap {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: var(--muted);
+      margin-top: 12px;
+    }
+  }
+</style>

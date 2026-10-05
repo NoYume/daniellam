@@ -1,0 +1,153 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+}
+body {
+  font-size: 19px;
+  line-height: 1.6;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+ul {
+  list-style: none;
+}
+button {
+  font: inherit;
+  color: inherit;
+}
+img,
+picture,
+video {
+  display: block;
+  max-width: 100%;
+}
+.wrap {
+  width: min(1280px, 100% - 2 * clamp(20px, 5vw, 72px));
+  margin-inline: auto;
+}
+
+/* Enoch's link-trace hover: the underline draws in and the text brightens,
+   with a soft glow in dark mode only. Keyboard focus shows the same. */
+.lt {
+  position: relative;
+  display: inline-block;
+  transition:
+    color 0.18s,
+    text-shadow 0.18s;
+}
+.lt::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.22em;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: 100% 50%;
+  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.lt:is(:hover, :focus-visible) {
+  color: var(--hi);
+  text-shadow: 0 0 1rem var(--hover-glow);
+}
+.lt:is(:hover, :focus-visible)::before,
+.lt.is-active::before {
+  transform: scaleX(1);
+  transform-origin: 0 50%;
+}
+.lt.is-active {
+  color: var(--hi);
+}
+:focus-visible {
+  outline: 2px solid var(--acc);
+  outline-offset: 3px;
+}
+.lt:focus-visible {
+  outline: none;
+}
+
+/* Skip link: off screen until it gets keyboard focus. */
+.skip {
+  position: fixed;
+  left: 16px;
+  top: 12px;
+  z-index: 100;
+  padding: 10px 16px;
+  border: 1px solid var(--line-2);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--hi);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  transform: translateY(-200%);
+  transition: transform 0.2s ease;
+}
+.skip:focus {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .la-flow,
+  .haze i,
+  .bars i {
+    animation: none !important;
+  }
+}
+
+/* Sections, with the vertical Chinese label left of each title (spec 6.2). */
+main section {
+  padding: clamp(96px, 13vh, 168px) 0;
+}
+main:focus {
+  outline: none;
+}
+.sec-title,
+.contact-big {
+  display: flex;
+  align-items: flex-start;
+  gap: 22px;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+.sec-title {
+  font-size: clamp(52px, 6.4vw, 100px);
+  line-height: 0.98;
+  margin-bottom: 20px;
+}
+.sec-sub {
+  font-size: 21px;
+  color: var(--muted);
+  max-width: 54ch;
+  margin-bottom: 72px;
+}
+.cjk {
+  display: inline-block;
+  flex: none;
+  writing-mode: vertical-rl;
+  font-family: var(--font-cjk);
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 1;
+  letter-spacing: 0.34em;
+  color: var(--acc);
+  padding-top: 0.45em;
+}
+.contact-big {
+  font-size: clamp(56px, 7.4vw, 124px);
+  line-height: 0.98;
+}

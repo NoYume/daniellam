@@ -1,0 +1,131 @@
+---
+import ThemeButton from './ThemeButton.astro';
+
+interface Props {
+  /** Show the name from the start, for pages without a hero (the 404). */
+  docked?: boolean;
+}
+
+const { docked = false } = Astro.props;
+// Links point at the homepage, so they also work from the 404 page.
+const SECTIONS = ['about', 'research', 'experience', 'projects', 'shots', 'contact'];
+---
+
+<div id="sentinel" aria-hidden="true"></div>
+<nav class:list={['bar', { docked }]} aria-label="Main">
+  <div class="wrap bar-in">
+    <a class="bar-name" href="/#top">Daniel Lam</a>
+    <div class="bar-right">
+      <div class="bar-links">
+        {SECTIONS.map((id) => <a class="lt" href={`/#${id}`}>{id}</a>)}
+      </div>
+      <ThemeButton />
+    </div>
+  </div>
+</nav>
+
+<script>
+  import { initNav } from '../scripts/nav';
+  initNav();
+</script>
+
+<style>
+  #sentinel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 40px;
+    pointer-events: none;
+  }
+  .bar {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 50;
+    border-bottom: 1px solid transparent;
+    transition:
+      background-color 0.3s ease,
+      border-color 0.3s ease;
+  }
+  .bar.solid {
+    background: color-mix(in srgb, var(--bg) 80%, transparent);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    backdrop-filter: blur(14px) saturate(1.2);
+    border-bottom-color: var(--line);
+  }
+  .bar-in {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    height: 76px;
+    transition: height 0.3s ease;
+  }
+  .bar.solid .bar-in {
+    height: 62px;
+  }
+  .bar-name {
+    font-family: var(--font-serif);
+    font-size: 23px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    /* Hidden, it is no tab stop either; visibility flips after the fade out. */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(6px);
+    transition:
+      opacity 0.35s ease,
+      transform 0.35s ease,
+      visibility 0s linear 0.35s;
+  }
+  .bar.docked .bar-name {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition-delay: 0s;
+  }
+  .bar-right {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+  }
+  .bar-links {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+    font-family: var(--font-mono);
+    font-size: 14.5px;
+    color: var(--text-2);
+  }
+  .bar-links a {
+    padding: 6px 0;
+  }
+  .bar-links a::before {
+    bottom: 3px;
+  }
+
+  /* Phones (spec 9): the name stays hidden, the links scroll sideways and the
+     theme button stays in view. */
+  @media (max-width: 900px) {
+    .bar-name {
+      display: none;
+    }
+    .bar-right {
+      flex: 1;
+      min-width: 0;
+      justify-content: flex-end;
+      gap: 14px;
+    }
+    .bar-links {
+      min-width: 0;
+      gap: 16px;
+      font-size: 13px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .bar-links::-webkit-scrollbar {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,98 @@
+/* Color tokens (spec 6.1), as plain values on html[data-mode]: light-dark()
+   would leave every color unset in browsers without it (Safari before 17.5).
+   Dark is the default. The light values apply in light mode, and without
+   JavaScript under a light system setting. */
+:root {
+  --bg: #0e0f11;
+  --surface: #15171a;
+  --stripe: #181a1e;
+  --line: #24272b;
+  --line-2: #30343a;
+  --text: #f0f1f2;
+  --text-2: #c9ccd1;
+  --muted: #979ba2;
+  /* Decoration only, never small text: it fails AA contrast. */
+  --faint: #6a6e75;
+  --hi: #f5f6f7;
+  --acc: #8faad0;
+  --g1: #3e5779;
+  --g2: #6f8fba;
+  --g3: #afc4e0;
+  --pg-body: #8a9099;
+  --pg-belly: #f0f1f2;
+  --pg-beak: #b9ae9c;
+  --base-op: 0.2;
+  --shot-filter: grayscale(1) brightness(0.85);
+  --hover-glow: rgb(255 255 255 / 0.4);
+  --r: 14px;
+}
+
+html[data-mode='light'] {
+  --bg: #f3f3f1;
+  --surface: #e9eae8;
+  --stripe: #e1e2e0;
+  --line: #dadbda;
+  --line-2: #c9cbcb;
+  --text: #141518;
+  --text-2: #383b40;
+  --muted: #676b73;
+  --faint: #92969d;
+  --hi: #121316;
+  --acc: #3e5f8a;
+  --g1: #22334d;
+  --g2: #3e5f8a;
+  --g3: #7e9cc2;
+  --pg-body: #3b3f46;
+  --pg-belly: #ffffff;
+  --pg-beak: #8f8676;
+  --base-op: 0.3;
+  --shot-filter: grayscale(1);
+  --hover-glow: transparent;
+}
+/* The same light values, for a light system setting without JavaScript. */
+@media (prefers-color-scheme: light) {
+  html:not([data-mode]) {
+    --bg: #f3f3f1;
+    --surface: #e9eae8;
+    --stripe: #e1e2e0;
+    --line: #dadbda;
+    --line-2: #c9cbcb;
+    --text: #141518;
+    --text-2: #383b40;
+    --muted: #676b73;
+    --faint: #92969d;
+    --hi: #121316;
+    --acc: #3e5f8a;
+    --g1: #22334d;
+    --g2: #3e5f8a;
+    --g3: #7e9cc2;
+    --pg-body: #3b3f46;
+    --pg-belly: #ffffff;
+    --pg-beak: #8f8676;
+    --base-op: 0.3;
+    --shot-filter: grayscale(1);
+    --hover-glow: transparent;
+  }
+}
+
+html {
+  color-scheme: light dark;
+}
+html[data-mode='light'] {
+  color-scheme: light;
+}
+html[data-mode='dark'] {
+  color-scheme: dark;
+}
+
+html {
+  background-color: var(--bg);
+  color: var(--text);
+}
+/* Only while switching modes (mode.ts adds the class): a transition at load
+   would fade the page in from white, the flash the head script prevents. */
+html.mode-switch {
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease;
+}

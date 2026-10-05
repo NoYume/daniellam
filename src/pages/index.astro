@@ -1,0 +1,31 @@
+---
+import { getEntry } from 'astro:content';
+import About from '../components/About.astro';
+import Contact from '../components/Contact.astro';
+import Experience from '../components/Experience.astro';
+import Footer from '../components/Footer.astro';
+import Hero from '../components/Hero.astro';
+import Nav from '../components/Nav.astro';
+import Projects from '../components/Projects.astro';
+import Research from '../components/Research.astro';
+import ShotsRow from '../components/ShotsRow.astro';
+import Base from '../layouts/Base.astro';
+import { getHeroPhotos } from '../lib/hero-data';
+
+const site = (await getEntry('site', 'site'))!.data;
+const heroPhotos = await getHeroPhotos();
+---
+
+<Base description={site.description} hero={heroPhotos}>
+  <Nav />
+  <Hero photos={heroPhotos} name={site.name} educationLine={site.educationLine} />
+  <main id="main" tabindex="-1">
+    <About />
+    <Research />
+    <Experience />
+    <Projects />
+    <ShotsRow />
+    <Contact />
+  </main>
+  <Footer />
+</Base>

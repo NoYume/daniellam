@@ -1,0 +1,203 @@
+---
+import EnvelopeSimple from '@phosphor-icons/core/regular/envelope-simple.svg';
+import FileText from '@phosphor-icons/core/regular/file-text.svg';
+import GithubLogo from '@phosphor-icons/core/regular/github-logo.svg';
+import GraduationCap from '@phosphor-icons/core/regular/graduation-cap.svg';
+import LinkedinLogo from '@phosphor-icons/core/regular/linkedin-logo.svg';
+import { Picture } from 'astro:assets';
+import { getEntry, render } from 'astro:content';
+import { getOrdered } from '../lib/content';
+
+const site = (await getEntry('site', 'site'))!.data;
+const about = (await getEntry('about', 'about'))!;
+const { Content } = await render(about);
+const recent = await getOrdered('recent');
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+/** A machine-readable date for labels like "2026" or "Jun 2026". */
+function datetime(label: string): string | undefined {
+  if (/^\d{4}$/.test(label)) return label;
+  const match = /^([A-Z][a-z]{2}) (\d{4})$/.exec(label);
+  const month = match ? MONTHS.indexOf(match[1]) + 1 : 0;
+  return month ? `${match![2]}-${String(month).padStart(2, '0')}` : undefined;
+}
+
+const icons = [
+  { label: 'Email', href: `mailto:${site.email}`, Icon: EnvelopeSimple },
+  { label: 'GitHub', href: site.links.github, Icon: GithubLogo },
+  { label: 'LinkedIn', href: site.links.linkedin, Icon: LinkedinLogo },
+  ...(site.links.scholar ? [{ label: 'Google Scholar', href: site.links.scholar, Icon: GraduationCap }] : []),
+  { label: 'Résumé', href: site.links.resume, Icon: FileText },
+];
+const { headshot, headshotAlt, headshotCredit } = about.data;
+---
+
+<section id="about">
+  <div class="wrap about">
+    <div>
+      {
+        headshot ? (
+          <Picture
+            class="headshot"
+            src={headshot}
+            alt={headshotAlt ?? site.name}
+            formats={['avif', 'webp']}
+            widths={[360, 720]}
+            sizes="(max-width: 900px) 100vw, 360px"
+            loading="lazy"
+          />
+        ) : (
+          <div class="headshot placeholder" aria-hidden="true" />
+        )
+      }
+      {headshotCredit && <p class="shot-credit">Photo: {headshotCredit}</p>}
+      <p class="id-name">{site.name}</p>
+      <p class="id-role">{site.roleLines.map((line) => <span class="role">{line}</span>)}</p>
+      <div class="id-icons">
+        {
+          icons.map(({ label, href, Icon }) => (
+            <a href={href} aria-label={label}>
+              <Icon width={25} height={25} aria-hidden="true" />
+            </a>
+          ))
+        }
+      </div>
+    </div>
+    <div>
+      <h2 class="about-lead">{about.data.lead}</h2>
+      <div class="about-body"><Content /></div>
+      <div class="news">
+        <h3>Recent</h3>
+        <ul>
+          {
+            recent.map(({ data }) => (
+              <li>
+                <time datetime={datetime(data.date)}>{data.date}</time>
+                {data.link ? (
+                  <a class="lt" href={data.link}>
+                    {data.text}
+                  </a>
+                ) : (
+                  <span>{data.text}</span>
+                )}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about {
+    display: grid;
+    grid-template-columns: minmax(260px, 360px) 1fr;
+    gap: clamp(40px, 6vw, 104px);
+    align-items: start;
+  }
+  .headshot {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    border-radius: var(--r);
+    object-fit: cover;
+  }
+  .placeholder {
+    background: repeating-linear-gradient(135deg, var(--surface) 0 14px, var(--stripe) 14px 28px);
+    border: 1px dashed var(--line-2);
+  }
+  .shot-credit {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 10px;
+  }
+  .id-name {
+    font-family: var(--font-serif);
+    font-size: 28px;
+    letter-spacing: -0.012em;
+    margin-top: 24px;
+  }
+  .id-role {
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.55;
+    margin-top: 6px;
+  }
+  .role {
+    display: block;
+  }
+  .id-icons {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+    color: var(--text-2);
+  }
+  .id-icons a {
+    transition:
+      color 0.18s,
+      transform 0.18s;
+  }
+  .id-icons a:is(:hover, :focus-visible) {
+    color: var(--hi);
+    transform: translateY(-2px);
+  }
+  .about-lead {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    letter-spacing: -0.012em;
+    font-size: clamp(30px, 2.8vw, 42px);
+    line-height: 1.22;
+    margin-bottom: 30px;
+    max-width: 26ch;
+  }
+  .about-body :global(p) {
+    font-size: 20px;
+    line-height: 1.68;
+    color: var(--text-2);
+    margin-bottom: 18px;
+    max-width: 62ch;
+  }
+  .about-body :global(a) {
+    color: var(--text);
+    border-bottom: 1px solid var(--line-2);
+    transition: border-color 0.18s;
+  }
+  .about-body :global(a:is(:hover, :focus-visible)) {
+    border-color: var(--text);
+  }
+  .news {
+    margin-top: 46px;
+    border-top: 1px solid var(--line);
+    padding-top: 26px;
+    max-width: 62ch;
+  }
+  .news h3 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 23px;
+    margin-bottom: 12px;
+  }
+  .news li {
+    display: grid;
+    grid-template-columns: 104px 1fr;
+    gap: 16px;
+    font-size: 18px;
+    padding: 7px 0;
+    color: var(--text-2);
+  }
+  .news time {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--muted);
+    padding-top: 3px;
+  }
+  @media (max-width: 900px) {
+    .about {
+      grid-template-columns: 1fr;
+    }
+    .about > div:first-child {
+      max-width: 360px;
+    }
+  }
+</style>

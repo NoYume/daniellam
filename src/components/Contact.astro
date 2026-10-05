@@ -1,0 +1,47 @@
+---
+import { getEntry } from 'astro:content';
+import SectionTitle from './SectionTitle.astro';
+
+const site = (await getEntry('site', 'site'))!.data;
+const { github, linkedin, scholar, resume } = site.links;
+---
+
+<section id="contact">
+  <div class="wrap">
+    <SectionTitle zh="聯絡" title="Get in touch." big />
+    <p class="contact-sub">I read everything. Email is the fastest way to reach me.</p>
+    <p class="contact-mail"><a class="lt" href={`mailto:${site.email}`}>{site.email}</a></p>
+    <div class="contact-links">
+      <a class="lt" href={github}>GitHub ↗</a>
+      <a class="lt" href={linkedin}>LinkedIn ↗</a>
+      {scholar && <a class="lt" href={scholar}>Scholar ↗</a>}
+      <a class="lt" href={resume}>Résumé ↓</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact-sub {
+    font-size: 21px;
+    color: var(--muted);
+    margin-top: 22px;
+    max-width: 46ch;
+  }
+  .contact-mail {
+    font-size: clamp(24px, 2.4vw, 36px);
+    margin-top: 30px;
+    letter-spacing: -0.01em;
+    overflow-wrap: anywhere;
+  }
+  .contact-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 30px;
+    margin-top: 30px;
+    font-family: var(--font-mono);
+    font-size: 14.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-2);
+  }
+</style>

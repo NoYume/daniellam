@@ -1,0 +1,63 @@
+---
+import { Font } from 'astro:assets';
+import Seo from '../components/Seo.astro';
+import type { HeroPhoto } from '../lib/hero-data';
+import '../styles/tokens.css';
+import '../styles/base.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** The homepage's hero photos; the head script picks one before the first paint. */
+  hero?: HeroPhoto[];
+  /** Keep the page out of search results (the 404 page). */
+  noindex?: boolean;
+}
+
+const { title = 'Daniel Lam', description, hero = [], noindex = false } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- The viewport comes first: the head script's preload sizes the hero photo
+         for it, and phones otherwise assume a 980px page and fetch a second size. -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline define:vars={{ photos: hero }}>
+      // Before the first paint: the saved mode (or else the system setting),
+      // then a random hero photo from that mode's set, preloaded right away.
+      (function () {
+        var m = null;
+        try { m = localStorage.getItem('mode'); } catch (e) {}
+        if (m !== 'light' && m !== 'dark') m = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        var html = document.documentElement;
+        html.dataset.mode = m;
+        var set = m === 'light' ? 'day' : 'night';
+        var list = photos.filter(function (p) { return p.set === set; });
+        if (!list.length) return;
+        var pick = list[Math.floor(Math.random() * list.length)];
+        window.__hero = { photos: photos, pick: pick };
+        html.dataset.hero = pick.id;
+        var link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.type = 'image/avif';
+        link.setAttribute('imagesrcset', pick.avif);
+        link.setAttribute('imagesizes', '100vw');
+        link.setAttribute('fetchpriority', 'high');
+        document.head.appendChild(link);
+      })();
+    </script>
+    <title>{title}</title>
+    <Seo title={title} description={description} noindex={noindex} />
+    <Font cssVariable="--font-serif" preload />
+    <Font cssVariable="--font-sans" preload={[{ weight: 400 }]} />
+    <Font cssVariable="--font-mono" />
+    <Font cssVariable="--font-cjk" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <slot />
+  </body>
+</html>

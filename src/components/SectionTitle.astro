@@ -1,0 +1,13 @@
+---
+interface Props {
+  /** The vertical Chinese label, decorative only. */
+  zh: string;
+  title: string;
+  /** Contact's larger title. */
+  big?: boolean;
+}
+
+const { zh, title, big = false } = Astro.props;
+---
+
+<h2 class={big ? 'contact-big' : 'sec-title'}><span class="cjk" lang="zh-Hant" aria-hidden="true">{zh}</span>{title}</h2>

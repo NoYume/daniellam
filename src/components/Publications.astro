@@ -1,0 +1,105 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Authors from './Authors.astro';
+
+interface Props {
+  /** Research entries in display order; the ones with publication details are listed. */
+  entries: CollectionEntry<'research'>[];
+}
+
+const papers = Astro.props.entries.filter((e) => e.data.publication);
+const LINKS = [
+  ['paper', 'Paper'],
+  ['website', 'Website'],
+  ['code', 'Code'],
+  ['bibtex', 'BibTeX'],
+] as const;
+---
+
+{
+  papers.length > 0 && (
+    <div class="pubs">
+      <h3>Publications</h3>
+      {papers.map(({ data }) => {
+        const pub = data.publication!;
+        const authors = data.authors ?? [];
+        return (
+          <div class="pub">
+            <span class="venue">{pub.venue}</span>
+            <div>
+              <span class="t">{data.title}.</span> <Authors authors={authors} short />{`. ${pub.venueFull}, ${pub.year}.`}
+              {authors.some((a) => a.equal) && (
+                <>
+                  {' '}
+                  <span class="note">* equal contribution</span>
+                </>
+              )}
+              <div class="links">
+                {LINKS.filter(([key]) => data.links?.[key]).map(([key, label]) => (
+                  <a class="lt" href={data.links![key]}>
+                    {label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  )
+}
+
+<style>
+  .pubs {
+    margin-top: 64px;
+    border-top: 1px solid var(--line);
+    padding-top: 30px;
+  }
+  .pubs h3 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 27px;
+    margin-bottom: 18px;
+  }
+  .pub {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 24px;
+    font-size: 18px;
+    color: var(--text-2);
+    max-width: 1000px;
+  }
+  .venue {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--acc);
+    padding-top: 3px;
+  }
+  .pub :global(b) {
+    color: var(--hi);
+    font-weight: 600;
+  }
+  .t {
+    color: var(--text);
+    font-weight: 500;
+  }
+  .note {
+    color: var(--muted);
+  }
+  .links {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 22px;
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  @media (max-width: 900px) {
+    .pub {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+  }
+</style>

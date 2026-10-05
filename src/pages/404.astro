@@ -1,0 +1,43 @@
+---
+import { getEntry } from 'astro:content';
+import Footer from '../components/Footer.astro';
+import Nav from '../components/Nav.astro';
+import Base from '../layouts/Base.astro';
+
+const site = (await getEntry('site', 'site'))!.data;
+---
+
+<Base title={`Page not found · ${site.name}`} description={site.description} noindex>
+  <Nav docked />
+  <main id="main" tabindex="-1" class="nf">
+    <div class="wrap">
+      <h1>This page doesn't exist.</h1>
+      <p><a class="lt" href="/">Back to the homepage</a></p>
+    </div>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .nf {
+    min-height: 72vh;
+    display: flex;
+    align-items: center;
+    padding: 140px 0 96px;
+  }
+  h1 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    font-size: clamp(44px, 6vw, 92px);
+    line-height: 1.02;
+  }
+  p {
+    margin-top: 28px;
+    font-family: var(--font-mono);
+    font-size: 14.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-2);
+  }
+</style>

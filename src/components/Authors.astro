@@ -1,0 +1,15 @@
+---
+// An author list, his name in bold, * for equal contribution. Kept on one
+// line: with compressHTML, line breaks between the parts become stray spaces.
+import { shortName } from '../lib/authors';
+
+interface Props {
+  authors: { name: string; me: boolean; equal: boolean }[];
+  /** Citation style: 'A. Balaji' instead of 'Arnav Balaji'. */
+  short?: boolean;
+}
+
+const { authors, short = false } = Astro.props;
+const label = (name: string) => (short ? shortName(name) : name);
+---
+{authors.map((a, i) => <>{i > 0 && ', '}{a.me ? <b>{label(a.name)}</b> : label(a.name)}{a.equal && '*'}</>)}

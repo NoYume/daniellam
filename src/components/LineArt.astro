@@ -1,0 +1,60 @@
+---
+import { lineArt } from '../lib/lineart';
+import type { LineArtKey } from '../lib/lineart-keys';
+
+interface Props {
+  kind: LineArtKey;
+  /** Unique on the page: it namespaces the drawing's gradient ids. */
+  uid: string;
+  class?: string;
+}
+
+const { kind, uid, class: className } = Astro.props;
+const svg = lineArt(kind, uid);
+const html = className ? svg.replace('<svg ', `<svg class="${className}" `) : svg;
+---
+
+<Fragment set:html={html} />
+
+<script>
+  import { initLineArt } from '../scripts/lineart';
+  initLineArt();
+</script>
+
+<style is:global>
+  /* Line art in blues (spec 6.4): faint base strokes, and short gradient
+     dashes that travel along a few paths. */
+  .la-base {
+    fill: none;
+    stroke: var(--text);
+    stroke-opacity: var(--base-op);
+    stroke-width: 1.1;
+  }
+  .la-dot {
+    fill: var(--text);
+    fill-opacity: 0.35;
+  }
+  .la-flow {
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-dasharray: 150 2400;
+    animation: laflow 7s linear infinite;
+  }
+  .la-tint {
+    fill: none;
+    stroke-width: 1.2;
+    stroke-opacity: 0.6;
+  }
+  .la-paused .la-flow {
+    animation-play-state: paused;
+  }
+  @keyframes laflow {
+    from {
+      stroke-dashoffset: 2550;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+</style>

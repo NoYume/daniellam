@@ -1,0 +1,358 @@
+---
+// The full-viewport hero (spec 7.3), back to front: the baked photo, edge
+// shading, grain, the matched haze, the bottom blur, the scrims, the text.
+import { HAZE } from '../lib/haze';
+import type { HeroPhoto } from '../lib/hero-data';
+
+interface Props {
+  photos: HeroPhoto[];
+  name: string;
+  educationLine: string;
+}
+
+const { photos, name, educationLine } = Astro.props;
+const firstNight = photos.find((p) => p.set === 'night')!;
+const firstDay = photos.find((p) => p.set === 'day')!;
+const hazeCss = Object.entries(HAZE)
+  .map(([key, h]) => `.hero[data-haze='${key}']{--haze-fill:${h.fill};--haze-o:${h.opacity};--haze-blend:${h.blend}}`)
+  .join('');
+---
+
+<header class="hero" id="top">
+  <div class="hero-media">
+    <picture class="hero-photo">
+      <source type="image/avif" sizes="100vw" />
+      <source type="image/webp" sizes="100vw" />
+      <img alt="" decoding="async" fetchpriority="high" />
+    </picture>
+    <noscript>
+      <picture class="hero-photo is-static">
+        <source media="(prefers-color-scheme: light)" type="image/avif" srcset={firstDay.avif} sizes="100vw" />
+        <source media="(prefers-color-scheme: light)" type="image/webp" srcset={firstDay.webp} sizes="100vw" />
+        <source type="image/avif" srcset={firstNight.avif} sizes="100vw" />
+        <source type="image/webp" srcset={firstNight.webp} sizes="100vw" />
+        <img src={firstNight.src} alt={firstNight.alt} width={firstNight.width} height={firstNight.height} />
+      </picture>
+    </noscript>
+  </div>
+  <div class="edge" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="haze" aria-hidden="true"><i></i></div>
+  <div class="sheet" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <div class="hero-scrim" aria-hidden="true"></div>
+  <div class="wrap hero-content">
+    <h1 class="hero-name">{name}</h1>
+    <p class="hero-edu">{educationLine}</p>
+  </div>
+  <div class="hero-foot">
+    <div class="wrap">
+      <span class="credit" id="credit"></span>
+      <noscript>
+        <span class="credit nojs-night">{firstNight.credit}</span>
+        <span class="credit nojs-day">{firstDay.credit}</span>
+      </noscript>
+    </div>
+  </div>
+  <script is:inline>
+    // Fill in the photo the head script picked, before the first paint.
+    (function () {
+      var h = window.__hero;
+      if (!h) return;
+      var p = h.pick;
+      var hero = document.currentScript.closest('.hero');
+      var picture = hero.querySelector('.hero-photo');
+      var sources = picture.querySelectorAll('source');
+      var img = picture.querySelector('img');
+      sources[0].srcset = p.avif;
+      sources[1].srcset = p.webp;
+      img.width = p.width;
+      img.height = p.height;
+      img.alt = p.alt;
+      img.dataset.photo = p.id;
+      img.dataset.set = p.set;
+      img.src = p.src;
+      var show = function () { img.classList.add('on'); };
+      if (img.complete && img.naturalWidth) show();
+      else img.addEventListener('load', show, { once: true });
+      hero.dataset.haze = p.haze;
+      document.getElementById('credit').textContent = p.credit;
+    })();
+  </script>
+</header>
+
+<Fragment set:html={`<style>${hazeCss}</style>`} />
+
+<script>
+  import { initHero } from '../scripts/hero';
+  initHero();
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 640px;
+    overflow: hidden;
+    background: var(--bg);
+    isolation: isolate;
+    container-type: size;
+
+    /* Edge shading and scrims for each mode; picked below. */
+    --edge-dark: radial-gradient(circle at 58% 48%, transparent 25cqmin, rgb(0 0 0 / 0.5) 80cqmax);
+    --edge-light: radial-gradient(circle at 56% 50%, transparent 30cqmin, rgb(60 45 30 / 0.08) 78cqmax);
+    --scrim-dark:
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--bg) 72%, transparent) 0,
+        color-mix(in srgb, var(--bg) 45%, transparent) 60px,
+        color-mix(in srgb, var(--bg) 16%, transparent) 120px,
+        transparent 180px
+      ),
+      linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--bg) 90%, transparent) 0%,
+        color-mix(in srgb, var(--bg) 80%, transparent) 22%,
+        color-mix(in srgb, var(--bg) 56%, transparent) 40%,
+        color-mix(in srgb, var(--bg) 26%, transparent) 54%,
+        color-mix(in srgb, var(--bg) 8%, transparent) 64%,
+        transparent 74%
+      ),
+      linear-gradient(
+        0deg,
+        var(--bg) 0%,
+        color-mix(in srgb, var(--bg) 90%, transparent) 6%,
+        color-mix(in srgb, var(--bg) 66%, transparent) 13%,
+        color-mix(in srgb, var(--bg) 36%, transparent) 20%,
+        color-mix(in srgb, var(--bg) 14%, transparent) 27%,
+        color-mix(in srgb, var(--bg) 4%, transparent) 33%,
+        transparent 38%
+      );
+    /* Light mode: the Softer fade Daniel chose (decision 41). */
+    --scrim-light:
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--bg) 60%, transparent) 0,
+        color-mix(in srgb, var(--bg) 36%, transparent) 60px,
+        color-mix(in srgb, var(--bg) 12%, transparent) 120px,
+        transparent 180px
+      ),
+      linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--bg) 80%, transparent) 0%,
+        color-mix(in srgb, var(--bg) 68%, transparent) 20%,
+        color-mix(in srgb, var(--bg) 44%, transparent) 34%,
+        color-mix(in srgb, var(--bg) 20%, transparent) 47%,
+        color-mix(in srgb, var(--bg) 6%, transparent) 57%,
+        transparent 66%
+      ),
+      linear-gradient(
+        0deg,
+        var(--bg) 0%,
+        color-mix(in srgb, var(--bg) 86%, transparent) 5%,
+        color-mix(in srgb, var(--bg) 58%, transparent) 10%,
+        color-mix(in srgb, var(--bg) 28%, transparent) 16%,
+        color-mix(in srgb, var(--bg) 9%, transparent) 22%,
+        color-mix(in srgb, var(--bg) 2%, transparent) 26%,
+        transparent 30%
+      );
+    --edge: var(--edge-dark);
+    --scrim: var(--scrim-dark);
+  }
+  :global(html.mode-switch) .hero {
+    transition: background-color 0.4s ease;
+  }
+  :global(html[data-mode='light']) .hero {
+    --edge: var(--edge-light);
+    --scrim: var(--scrim-light);
+  }
+  @media (prefers-color-scheme: light) {
+    :global(html:not([data-mode])) .hero {
+      --edge: var(--edge-light);
+      --scrim: var(--scrim-light);
+    }
+  }
+
+  /* 1. The photo, fading in once loaded. hero.ts adds pictures, so these are global. */
+  .hero-media {
+    position: absolute;
+    inset: 0;
+    transform-origin: 50% 45%;
+    will-change: transform;
+  }
+  .hero-media :global(.hero-photo),
+  .hero-media :global(.hero-photo img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .hero-media :global(.hero-photo img) {
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+  .hero-media :global(.hero-photo img.on),
+  .hero-media :global(.hero-photo.is-static img) {
+    opacity: 1;
+  }
+
+  .edge,
+  .grain,
+  .haze,
+  .sheet,
+  .hero-scrim {
+    position: absolute;
+    pointer-events: none;
+  }
+
+  /* 2. Edge shading, sized to the screen. */
+  .edge {
+    inset: 0;
+    background: var(--edge);
+  }
+
+  /* 3. Grain: about ±5% brightness, like the prototype's. */
+  .grain {
+    inset: 0;
+    background: url('../generated/grain.webp') 0 0 / 256px;
+    mix-blend-mode: overlay;
+    opacity: 0.35;
+  }
+
+  /* 4. Haze: the fog tile masks the matched color, drifting left. */
+  .haze {
+    inset: 0;
+    overflow: hidden;
+    mix-blend-mode: var(--haze-blend);
+    opacity: var(--haze-o);
+    will-change: transform;
+    animation: haze-in 1s ease both;
+  }
+  .hero:not([data-haze]) .haze {
+    display: none;
+  }
+  .haze i {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: calc(100% + 1600px);
+    background: var(--haze-fill);
+    -webkit-mask: url('../generated/fog.webp') 0 0 / 1600px 100% repeat-x;
+    mask: url('../generated/fog.webp') 0 0 / 1600px 100% repeat-x;
+    animation: haze-drift 70s linear infinite;
+  }
+  @keyframes haze-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes haze-drift {
+    to {
+      transform: translate3d(-1600px, 0, 0);
+    }
+  }
+
+  /* 5. Bottom blur: four backdrop blurs, each masked to its band. */
+  .sheet {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 36%;
+  }
+  .sheet i {
+    position: absolute;
+    inset: 0;
+  }
+  .sheet i:nth-child(1) {
+    -webkit-backdrop-filter: blur(1px);
+    backdrop-filter: blur(1px);
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 25%, #000 50%, transparent 75%);
+    mask-image: linear-gradient(180deg, transparent 0%, #000 25%, #000 50%, transparent 75%);
+  }
+  .sheet i:nth-child(2) {
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    -webkit-mask-image: linear-gradient(180deg, transparent 25%, #000 50%, #000 75%, transparent 100%);
+    mask-image: linear-gradient(180deg, transparent 25%, #000 50%, #000 75%, transparent 100%);
+  }
+  .sheet i:nth-child(3) {
+    -webkit-backdrop-filter: blur(7px);
+    backdrop-filter: blur(7px);
+    -webkit-mask-image: linear-gradient(180deg, transparent 50%, #000 75%);
+    mask-image: linear-gradient(180deg, transparent 50%, #000 75%);
+  }
+  .sheet i:nth-child(4) {
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    -webkit-mask-image: linear-gradient(180deg, transparent 75%, #000 100%);
+    mask-image: linear-gradient(180deg, transparent 75%, #000 100%);
+  }
+
+  /* 6. Scrims: the page color fading in at the top, left and bottom. */
+  .hero-scrim {
+    inset: 0;
+    background: var(--scrim);
+  }
+
+  /* 7. Text. */
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 110px 0 120px;
+    will-change: transform, opacity;
+  }
+  .hero-name {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(56px, 7.2vw, 116px);
+    line-height: 1;
+    letter-spacing: -0.022em;
+    margin-bottom: 20px;
+  }
+  .hero-edu {
+    font-family: var(--font-serif);
+    font-size: clamp(18px, 1.42vw, 22px);
+    color: var(--text-2);
+    letter-spacing: 0.002em;
+  }
+  @media (min-width: 900px) {
+    .hero-edu {
+      white-space: nowrap;
+    }
+  }
+  .hero-foot {
+    position: absolute;
+    z-index: 2;
+    left: 0;
+    right: 0;
+    bottom: 26px;
+  }
+  .hero-foot .wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+  }
+  .credit {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+  .hero-foot :global(.nojs-day) {
+    display: none;
+  }
+  @media (prefers-color-scheme: light) {
+    .hero-foot :global(.nojs-day) {
+      display: inline;
+    }
+    .hero-foot :global(.nojs-night) {
+      display: none;
+    }
+  }
+</style>

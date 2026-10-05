@@ -1,0 +1,47 @@
+---
+import Moon from '@phosphor-icons/core/regular/moon.svg';
+import Sun from '@phosphor-icons/core/regular/sun.svg';
+---
+
+<!-- Shows the sun in dark mode and the moon in light mode; nav.ts keeps the label current. -->
+<button class="theme-btn" type="button" aria-label="Switch to light mode">
+  <span class="i-sun"><Sun width={18} height={18} aria-hidden="true" /></span>
+  <span class="i-moon"><Moon width={18} height={18} aria-hidden="true" /></span>
+</button>
+
+<style>
+  .theme-btn {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--line-2);
+    border-radius: 50%;
+    background: none;
+    color: var(--text-2);
+    cursor: pointer;
+    transition:
+      color 0.18s,
+      border-color 0.18s;
+  }
+  .theme-btn:hover,
+  .theme-btn:focus-visible {
+    color: var(--hi);
+    border-color: var(--hi);
+  }
+  span {
+    display: grid;
+  }
+  .i-moon,
+  :global(html[data-mode='light']) .i-sun {
+    display: none;
+  }
+  :global(html[data-mode='light']) .i-moon {
+    display: grid;
+  }
+  /* Without JavaScript the button can't switch anything, so it stays out of the way. */
+  :global(html:not([data-mode])) .theme-btn {
+    display: none;
+  }
+</style>

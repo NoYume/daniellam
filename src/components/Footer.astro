@@ -1,0 +1,41 @@
+---
+import { getEntry } from 'astro:content';
+import Penguin from './Penguin.astro';
+
+const site = (await getEntry('site', 'site'))!.data;
+const year = new Date().getFullYear();
+---
+
+<div class="wrap">
+  <footer>
+    <!-- hero.ts fills in the hero photo's credit. -->
+    <span id="footCredit"></span>
+    <span class="foot-r"><Penguin class="pg" />{site.name}, {year}</span>
+  </footer>
+</div>
+
+<style>
+  footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    padding: 34px 0 56px;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .foot-r {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-left: auto;
+  }
+  .foot-r :global(.pg) {
+    display: block;
+    width: 30px;
+    height: 30px;
+    flex: none;
+  }
+</style>
