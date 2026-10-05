@@ -1,0 +1,8 @@
+- id: ongoing
+  name: Ongoing
+  years: 2025-now
+  code: https://github.com/example/ongoing
+- id: done
+  name: Done
+  years: 2026
+  code: https://github.com/example/done

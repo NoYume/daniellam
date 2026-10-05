@@ -115,8 +115,10 @@ const projects = defineCollection({
     name: z.string(),
     description: z.string(),
     tech: z.array(z.string()),
-    year: z.number(),
-    link: z.url().optional(),
+    // 2025, 2025-2026 or 2025-now. YAML reads a lone year as a number.
+    years: z.coerce.string().regex(/^\d{4}(-(\d{4}|now))?$/),
+    live: z.url().optional(),
+    code: z.url(),
   }),
 });
 

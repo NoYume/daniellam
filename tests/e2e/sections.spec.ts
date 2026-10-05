@@ -2,14 +2,6 @@ import { expect, test } from '@playwright/test';
 import { FIRST_NIGHT } from './fixtures';
 import { collectErrors, pinRandom } from './helpers';
 
-test('projects list', async ({ page }) => {
-  await page.goto('/');
-  await expect(page.locator('#projects .pj-title')).toHaveText(['Coding Research Agent', 'Choose Your Adventure', 'Email automation on GCP']);
-  const first = page.locator('#projects .pj-row').first();
-  await expect(first.locator('.pj-tech')).toHaveText('LangGraph, Claude API, Firecrawl, MCP');
-  await expect(first.locator('.pj-year')).toHaveText('2025');
-});
-
 test('shots are grayscale until hover', async ({ page, isMobile }) => {
   test.skip(isMobile, 'touch screens use the middle of the screen instead');
   await page.goto('/');

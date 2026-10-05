@@ -53,6 +53,8 @@ test('bad tree reports each problem', async () => {
   has('src/components/Bad.astro', 'en or em dash');
   has('src/pages/entity.astro', 'en or em dash');
   has('src/content/recent.yaml', 'does not parse');
+  has('src/content/projects.yaml', "'new' (2025-2026) is newer than 'old' (2024) above it");
+  has('src/content/projects.yaml', "'ongoing' (2025-now) is newer than 'new' (2025-2026) above it");
   // Only the entry without alt text is reported, not the fine one beside it.
   expect(problems.filter((p) => p.file === 'src/content/hero.yaml')).toHaveLength(1);
 });

@@ -1,15 +1,48 @@
-- id: coding-research-agent
-  name: Coding Research Agent
-  description: A CLI agent that finds, compares, and analyzes developer tools.
-  tech: [LangGraph, Claude API, Firecrawl, MCP]
-  year: 2025
+# Projects, newest first. The content check stops the build when a project
+# sits above a newer one. `years` is 2025, 2025-2026 or 2025-now, and `now`
+# counts as the newest. `live` is optional; every project links its `code`.
+- id: littlefilm
+  name: LittleFilm
+  description: "Browse what's in theaters through The Movie Database: a cover-flow carousel, live search, sorting and a detail card for each film."
+  tech: [JavaScript, HTML, CSS, TMDB API]
+  years: 2026
+  live: https://project3-flixster.onrender.com/
+  code: https://github.com/NoYume/Project3-Flixster
+- id: music-playlist-explorer
+  name: Music Playlist Explorer
+  description: Browse playlists, like them and shuffle their songs, in plain JavaScript.
+  tech: [JavaScript, HTML, CSS]
+  years: 2026
+  code: https://github.com/NoYume/Project2-Music-Playlist-Explorer
+- id: sbi-portal
+  name: SBI Portal
+  description: The Sustainable Building Initiative's portal for its 78 members and 10 clients. I built its AI assistant, which answers from SBI's files with hybrid vector and keyword search.
+  tech: [Next.js, TypeScript, FastAPI, LangGraph, pgvector]
+  years: 2025-2026
+  live: https://utsbi.org
+  code: https://github.com/utsbi/portal
 - id: choose-your-adventure
   name: Choose Your Adventure
-  description: An AI story generator with branching narratives and async job processing.
-  tech: [React, FastAPI, PostgreSQL, Claude API]
-  year: 2025
-- id: email-automation
-  name: Email automation on GCP
-  description: A serverless pipeline that replaced manual data entry for 60+ new member signups.
-  tech: [Cloud Run Jobs, Cloud Scheduler, Sheets API, GitHub Actions]
-  year: 2025
+  description: Type a theme and Claude writes a branching adventure to play through, generated in the background while you wait.
+  tech: [React, FastAPI, PostgreSQL, LangChain, Claude API]
+  years: 2025
+  live: https://choose-your-adventure-green.vercel.app/
+  code: https://github.com/NoYume/Choose-Your-Adventure
+- id: sbi-email-automation
+  name: SBI Email Automation
+  description: A daily job that reads SBI's interest form and emails each new signup, replacing hand-entered data for 60+ signups.
+  tech: [Python, Cloud Run Jobs, Cloud Scheduler, Sheets API, GitHub Actions]
+  years: 2025
+  code: https://github.com/utsbi/automation-system
+- id: safemanibench
+  name: SafeManiBench
+  description: The first version of the OopsieVerse safety benchmark, built on RoboSuite before the move to RoboCasa.
+  tech: [Python, MuJoCo, RoboSuite]
+  years: 2025
+  code: https://github.com/NoYume/SafeManiBench-RoboSuite-Legacy
+- id: austin-sound-permits
+  name: Austin Sound Permits
+  description: "Machine learning on 6,000+ Austin sound permits from 2009-2025, with four classmates. My part: why outdoor music venues wait about 70 days while concrete pours clear the same day."
+  tech: [Python, pandas, scikit-learn, Jupyter]
+  years: 2025
+  code: https://github.com/dysonspheres/soundOrdinanceProject

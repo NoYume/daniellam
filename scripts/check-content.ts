@@ -102,6 +102,20 @@ export async function checkContent(root: string): Promise<Problem[]> {
     }
   }
 
+  // 6. Projects are listed newest first, by each one's last year. `now` is the
+  // newest of all, so ongoing projects lead.
+  const lastYear = (years: unknown) => {
+    const last = String(years).split('-').pop();
+    return last === 'now' ? Infinity : Number(last);
+  };
+  const projects = entries('src/content/projects.yaml');
+  projects.slice(1).forEach((entry, i) => {
+    const above = projects[i]!;
+    if (lastYear(entry.years) > lastYear(above.years)) {
+      report('src/content/projects.yaml', `'${entry.id}' (${entry.years}) is newer than '${above.id}' (${above.years}) above it; list the newest project first`);
+    }
+  });
+
   return problems;
 }
 

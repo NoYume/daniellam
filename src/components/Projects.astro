@@ -1,70 +1,167 @@
 ---
+import ArrowUpRight from '@phosphor-icons/core/light/arrow-up-right-light.svg';
 import { getEntry } from 'astro:content';
 import { getOrdered } from '../lib/content';
 import SectionTitle from './SectionTitle.astro';
 
 const site = (await getEntry('site', 'site'))!.data;
 const projects = await getOrdered('projects');
+
+/** A name as its leading words (with their trailing space) and its last word. */
+function split(name: string): [string, string] {
+  const at = name.lastIndexOf(' ');
+  return [name.slice(0, at + 1), name.slice(at + 1)];
+}
 ---
 
-<!-- Plain rows until Projects gets its own design (a later phase). -->
 <section id="projects">
   <div class="wrap">
     <SectionTitle zh="作品" title="Projects" />
     <p class="sec-sub">{site.subtitles.projects}</p>
     {
-      projects.map(({ data }) => (
-        <div class="pj-row">
-          <div>
-            <h3 class="pj-title">
-              {data.link ? (
-                <a class="lt" href={data.link}>
-                  {data.name}
-                </a>
-              ) : (
-                data.name
-              )}
+      projects.map(({ data }) => {
+        const [lead, last] = split(data.name);
+        return (
+          <article class="pj">
+            <h3 class="pj-name">
+              {/* One line: whitespace before the arrow or the closing tags would let the arrow wrap alone. */}
+              <a class="pj-link" href={data.live ?? data.code}><span class="pj-text">{lead}<span class="pj-last">{last}<ArrowUpRight class="pj-arrow" viewBox="58 58 140 140" aria-hidden="true" /></span></span></a>
             </h3>
-            <p class="pj-desc">{data.description}</p>
-            <p class="pj-tech">{data.tech.join(', ')}</p>
-          </div>
-          <span class="pj-year">{data.year}</span>
-        </div>
-      ))
+            <div class="pj-body">
+              <p class="pj-sum">{data.description}</p>
+              <p class="pj-tech">{data.tech.join(', ')}</p>
+              <p class="pj-links">
+                {data.live && (
+                  <a class="lt" href={data.live}>
+                    Live ↗
+                  </a>
+                )}
+                <a class="lt" href={data.code}>
+                  Code ↗
+                </a>
+              </p>
+            </div>
+            <span class="pj-years">{data.years}</span>
+          </article>
+        );
+      })
     }
   </div>
 </section>
 
 <style>
-  .pj-row {
+  /* Laptops: an index. The name, then the summary with its tech and links,
+     then the years, on one first baseline. */
+  .pj {
     display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 24px;
-    padding: 32px 0;
+    grid-template-columns: minmax(240px, 24rem) 1fr auto;
+    gap: 8px 40px;
+    align-items: baseline;
+    padding: 28px 0;
     border-top: 1px solid var(--line);
   }
-  .pj-title {
+  .pj:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .pj-name {
     font-family: var(--font-serif);
     font-weight: 400;
-    letter-spacing: -0.015em;
-    font-size: clamp(32px, 3.4vw, 52px);
+    font-size: clamp(26px, 2.3vw, 34px);
     line-height: 1.05;
+    letter-spacing: -0.015em;
   }
-  .pj-desc {
+  .pj-body {
+    display: grid;
+    gap: 8px;
+  }
+  .pj-sum {
     color: var(--text-2);
-    font-size: 19.5px;
-    margin-top: 10px;
-    max-width: 60ch;
+    font-size: 18.5px;
+    max-width: 58ch;
   }
   .pj-tech {
     font-family: var(--font-mono);
     font-size: 13.5px;
     color: var(--muted);
-    margin-top: 10px;
   }
-  .pj-year {
+  .pj-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-top: 4px;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .pj-years {
     font-family: var(--font-mono);
     font-size: 14px;
     color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* The name's underline is a background on its text, so a name that wraps
+     gets a line under each row. The arrow rides with the last word (they share
+     a no-wrap span) but takes no width there, so the underline stops at the
+     word; the arrow hangs into the link's end padding. Its top sits on
+     Zodiak's cap line, .70em above the baseline. */
+  .pj-link {
+    padding-right: 0.46em;
+    transition:
+      color 0.18s,
+      text-shadow 0.18s;
+  }
+  .pj-text {
+    background: linear-gradient(currentColor, currentColor) no-repeat;
+    background-size: 0 1px;
+    background-position: 100% calc(100% - 0.14em);
+    transition: background-size 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .pj-last {
+    white-space: nowrap;
+  }
+  .pj-arrow {
+    display: inline-block;
+    width: 0.3em;
+    height: 0.3em;
+    margin: 0 -0.46em 0 0.16em;
+    vertical-align: 0.4em;
+    color: var(--faint);
+    transition: color 0.18s;
+  }
+  .pj-link:is(:hover, :focus-visible) {
+    color: var(--hi);
+    text-shadow: 0 0 1rem var(--hover-glow);
+  }
+  .pj-link:is(:hover, :focus-visible) .pj-text {
+    background-size: 100% 1px;
+    background-position: 0 calc(100% - 0.14em);
+  }
+  .pj-link:is(:hover, :focus-visible) .pj-arrow {
+    color: var(--hi);
+  }
+  .pj-link:focus-visible {
+    outline: none;
+  }
+
+  /* Phones: rows. The years, then the name, summary, tech and links. */
+  @media (max-width: 900px) {
+    .pj {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .pj-years {
+      order: -1;
+    }
+    .pj-name {
+      font-size: 32px;
+    }
+    .pj-body {
+      gap: 10px;
+    }
+    .pj-sum {
+      font-size: 18px;
+    }
   }
 </style>
