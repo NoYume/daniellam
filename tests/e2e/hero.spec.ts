@@ -104,6 +104,15 @@ test('scroll parallax moves the layers', async ({ page }) => {
   await expect.poll(() => translateY(page, '.hero-content')).toBeCloseTo(54, 0);
 });
 
+// The haze holds still, as in Daniel's read of v6; only the scroll parallax moves it.
+test('the haze holds still', async ({ page }) => {
+  await page.goto('/');
+  const left = () => page.locator('.haze i').evaluate((el) => el.getBoundingClientRect().left);
+  const before = await left();
+  await page.waitForTimeout(1000);
+  expect(await left()).toBe(before);
+});
+
 test.describe('with reduced motion', () => {
   test.use({ reducedMotion: 'reduce' });
 

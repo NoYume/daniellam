@@ -220,10 +220,9 @@ const hazeCss = Object.entries(HAZE)
     opacity: 0.35;
   }
 
-  /* 4. Haze: the fog tile masks the matched color, drifting left. */
+  /* 4. Haze: the fog tile masks the matched color. It holds still; only the scroll parallax moves it. */
   .haze {
     inset: 0;
-    overflow: hidden;
     mix-blend-mode: var(--haze-blend);
     opacity: var(--haze-o);
     will-change: transform;
@@ -234,23 +233,14 @@ const hazeCss = Object.entries(HAZE)
   }
   .haze i {
     position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: calc(100% + 1600px);
+    inset: 0;
     background: var(--haze-fill);
     -webkit-mask: url('../generated/fog.webp') 0 0 / 1600px 100% repeat-x;
     mask: url('../generated/fog.webp') 0 0 / 1600px 100% repeat-x;
-    animation: haze-drift 70s linear infinite;
   }
   @keyframes haze-in {
     from {
       opacity: 0;
-    }
-  }
-  @keyframes haze-drift {
-    to {
-      transform: translate3d(-1600px, 0, 0);
     }
   }
 

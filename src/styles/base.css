@@ -102,7 +102,6 @@ video {
     scroll-behavior: auto;
   }
   .la-flow,
-  .haze i,
   .bars i {
     animation: none !important;
   }
