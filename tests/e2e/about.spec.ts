@@ -32,15 +32,20 @@ test('scholar icon is absent until a profile is set', async ({ page }) => {
 
 test('recent list keeps its order', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('#about .news time')).toHaveText(['2026', 'Jun 2026', 'Jan 2026', 'Jan 2026']);
+  await expect(page.locator('#about .news time')).toHaveText(['Jun 2026', 'Jun 2026', 'Jan 2026', 'Jan 2026']);
   await expect(page.locator('#about .news li').first()).toContainText('OopsieVerse accepted to RSS 2026.');
-  await expect(page.locator('#about .news time').nth(1)).toHaveAttribute('datetime', '2026-06');
+  await expect(page.locator('#about .news time').first()).toHaveAttribute('datetime', '2026-06');
 });
 
-test('the headshot placeholder holds the 4:5 space', async ({ page }) => {
+test('the headshot shows at 4:5, with its alt text and no credit line', async ({ page }) => {
   await page.goto('/');
-  const box = await page.locator('#about .headshot').boundingBox();
-  expect(box).not.toBeNull();
+  const photo = page.locator('#about img.headshot');
+  await photo.scrollIntoViewIfNeeded();
+  await expect(photo).toHaveAttribute('alt', 'Portrait of Daniel Lam');
+  await expect.poll(() => photo.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth)).toBeGreaterThan(0);
+  const box = await photo.boundingBox();
   expect(box!.height / box!.width).toBeCloseTo(1.25, 2);
+  await expect(photo).toHaveCSS('object-fit', 'cover');
+  await expect(page.locator('#about .shot-credit')).toHaveCount(0);
   await expect(page.locator('#about .role')).toHaveText(['Computer Science, UT Austin, May 2028', 'Research Assistant, RobIn Lab']);
 });

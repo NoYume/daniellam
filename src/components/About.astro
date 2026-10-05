@@ -98,6 +98,8 @@ const { headshot, headshotAlt, headshotCredit } = about.data;
   }
   .headshot {
     width: 100%;
+    /* The photo's height attribute would otherwise override the aspect ratio. */
+    height: auto;
     aspect-ratio: 4 / 5;
     border-radius: var(--r);
     object-fit: cover;

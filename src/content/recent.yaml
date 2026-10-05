@@ -1,13 +1,13 @@
 # Newest first. Shown in this order under About.
 - id: rss-2026
-  date: '2026'
+  date: Jun 2026
   text: OopsieVerse accepted to RSS 2026.
 - id: salesforce
   date: Jun 2026
   text: Joined Salesforce Agentforce as a software engineer intern.
-- id: tmr-perception
+- id: tmr-simulation
   date: Jan 2026
-  text: Started leading perception for Texas Marine Robotics.
+  text: Started leading simulation for Texas Marine Robotics.
 - id: peer-mentor
   date: Jan 2026
   text: Became a peer mentor for robot learning at Texas Robotics.
