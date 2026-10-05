@@ -43,16 +43,37 @@ test('mulberry32 matches the prototype', () => {
   expect(mulberry32(7)()).toBeCloseTo(0.011704753153026104, 12);
 });
 
-test('fog tile is 400×225', async () => {
+test('fog tile is the 400×225 drawing at half size', async () => {
   const meta = await sharp(await fogTile()).metadata();
-  expect([meta.width, meta.height, meta.hasAlpha]).toEqual([400, 225, true]);
+  expect([meta.width, meta.height, meta.hasAlpha]).toEqual([200, 113, true]);
 });
 
 test('fog sits in the middle band, clear at the top', async () => {
   const { data } = await sharp(await fogTile()).extractChannel(3).raw().toBuffer({ resolveWithObject: true });
-  const rowMean = (y: number) => data.subarray(y * 400, (y + 1) * 400).reduce((s, v) => s + v, 0) / 400;
+  const rowMean = (y: number) => data.subarray(y * 200, (y + 1) * 200).reduce((s, v) => s + v, 0) / 200;
   expect(rowMean(0)).toBeLessThan(2);
-  expect(rowMean(124)).toBeGreaterThan(10);
+  expect(rowMean(62)).toBeGreaterThan(10);
+});
+
+// The haze slides the fog sideways, so every place the tile repeats crosses the
+// hero. v6's canvas fog stays as strong at its edges as inside them.
+test('fog repeats without a seam: as strong at its edges as just inside them', async () => {
+  const { data, info } = await sharp(await fogTile()).extractChannel(3).raw().toBuffer({ resolveWithObject: true });
+  const { width: w, height: h } = info;
+  const colMean = (x: number) => {
+    let sum = 0;
+    for (let y = 0; y < h; y++) sum += data[y * w + x]!;
+    return sum / h;
+  };
+  const inset = Math.round(w * 0.08);
+  expect(colMean(0)).toBeGreaterThan(0.8 * colMean(inset));
+  expect(colMean(w - 1)).toBeGreaterThan(0.8 * colMean(w - 1 - inset));
+});
+
+// Stretched 8× across the hero, a coarse alpha shows as contour bands. v6's fog has 159 levels.
+test('fog keeps a smooth alpha, without bands', async () => {
+  const { data } = await sharp(await fogTile()).extractChannel(3).raw().toBuffer({ resolveWithObject: true });
+  expect(new Set(data).size).toBeGreaterThan(100);
 });
 
 test('the tiles stay small, since they load before the first paint', async () => {
