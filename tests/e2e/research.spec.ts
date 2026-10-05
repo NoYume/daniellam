@@ -47,10 +47,10 @@ test('pinned panel follows the entry in the middle', async ({ page, isMobile }) 
   test.skip(isMobile, 'phones show each entry with its own media (Task 15)');
   await page.goto('/');
   await expect(page.locator('#rsMedia > :nth-child(1)')).toHaveClass(/\bon\b/);
-  await expect(page.locator('#rsCap')).toHaveText('Robot arm and its trajectory.');
+  await expect(page.locator('#rsCap')).toHaveText('OopsieVerse overview. Video: RobIn Lab');
   await page.locator('.rs-entry[data-media="1"]').evaluate((el) => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
   await expect(page.locator('#rsMedia > :nth-child(2)')).toHaveClass(/\bon\b/);
   await expect(page.locator('#rsMedia > :nth-child(1)')).not.toHaveClass(/\bon\b/);
-  await expect(page.locator('#rsCap')).toHaveText('Heads-up display.');
-  await expect(page.locator('#rsMedia > :nth-child(2) svg[data-art="hud"]')).toBeVisible();
+  await expect(page.locator('#rsCap')).toHaveText('Damage-aware data collection. Video: RobIn Lab');
+  await expect(page.locator('#rsMedia > :nth-child(2) video')).toBeVisible();
 });

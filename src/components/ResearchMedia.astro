@@ -1,0 +1,55 @@
+---
+// One research entry's media, in the pinned panel and, on phones, inside the
+// entry: a line-art drawing, a video on its poster, or a photo. Posters and
+// photos get their address from media.ts near view (an img src or a poster
+// attribute would load with the page, competing with the hero); the noscript
+// copy shows them without JavaScript.
+import type { GetImageResult } from 'astro';
+import type { CollectionEntry } from 'astro:content';
+import LineArt from './LineArt.astro';
+
+interface Props {
+  media: CollectionEntry<'research'>['data']['media'];
+  /** The poster or photo, at its delivery sizes. */
+  still: GetImageResult | null;
+  uid: string;
+}
+
+const { media, still, uid } = Astro.props;
+const sizes = '(max-width: 900px) 100vw, 50vw';
+// The scripted image names a photo; the noscript copy stays unnamed so it isn't read twice.
+const alt = 'image' in media ? media.alt : '';
+---
+
+{
+  'art' in media ? (
+    <LineArt kind={media.art} uid={uid} />
+  ) : (
+    <div class="stack">
+      <img data-src={still?.src} data-srcset={still?.srcSet.attribute} sizes={sizes} alt={alt} decoding="async" />
+      <noscript>
+        <img src={still?.src} srcset={still?.srcSet.attribute} sizes={sizes} alt="" />
+      </noscript>
+      {'video' in media && <video src={media.video} muted loop playsinline preload="none" />}
+    </div>
+  )
+}
+
+<style>
+  .stack {
+    position: relative;
+  }
+  .stack img,
+  .stack video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* Without JavaScript (no data-mode) nothing plays the video, and browsers
+     would draw their own controls over the poster. */
+  :global(html:not([data-mode])) .stack video {
+    display: none;
+  }
+</style>

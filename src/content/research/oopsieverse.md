@@ -11,14 +11,15 @@ authors:
   - { name: Junhong Xu }
   - { name: Roberto Martín-Martín }
 summary: A simulator-agnostic framework that turns contact forces, heat, and liquid into measurable damage, plus 32 household tasks that pit easy-but-risky strategies against careful ones.
-myPart: 'Led the RoboCasa implementation: 23 damageable objects, 16 kitchen environments, and 13 long-horizon tasks with staged subgoal checks.'
+myPart: 'Led the RoboCasa implementation: 23 damageable objects, 16 kitchen environments, and 15 long-horizon tasks with staged subgoal checks.'
 links:
   paper: https://arxiv.org/abs/2606.31993
   website: https://robin-lab.cs.utexas.edu/oopsieverse/
   code: https://github.com/UT-Austin-RobIn/oopsieverse
 media:
-  art: arm
-  caption: Robot arm and its trajectory.
+  video: /videos/oopsieverse.mp4
+  poster: ../../assets/research/oopsieverse.jpg
+  caption: 'OopsieVerse overview. Video: RobIn Lab'
 publication:
   venue: RSS 2026
   venueFull: 'Robotics: Science and Systems'

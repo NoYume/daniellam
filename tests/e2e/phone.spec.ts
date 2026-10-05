@@ -31,8 +31,8 @@ test.describe('phones', () => {
     const art = await first.locator('.entry-media').boundingBox();
     const name = await first.locator('.ex-co').boundingBox();
     expect(art!.y + art!.height).toBeLessThanOrEqual(name!.y);
-    await expect(page.locator('.rs-entry').nth(1).locator('.entry-media svg')).toHaveAttribute('data-art', 'hud');
-    await expect(page.locator('.rs-entry').nth(1).locator('.entry-cap')).toHaveText('Heads-up display.');
+    await expect(page.locator('.rs-entry').nth(1).locator('.entry-media video')).toHaveCount(1);
+    await expect(page.locator('.rs-entry').nth(1).locator('.entry-cap')).toHaveText('Damage-aware data collection. Video: RobIn Lab');
   });
 
   test('pinned panels are hidden', async ({ page }) => {

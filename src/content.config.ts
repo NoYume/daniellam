@@ -88,6 +88,7 @@ const research = defineCollection({
       media: z.union([
         z.object({ art: z.enum(LINE_ART_KEYS), caption: z.string() }),
         z.object({ video: z.string(), poster: image(), caption: z.string() }),
+        z.object({ image: image(), alt: z.string(), caption: z.string() }),
       ]),
       publication: z.object({ venue: z.string(), venueFull: z.string(), year: z.number() }).optional(),
     }),

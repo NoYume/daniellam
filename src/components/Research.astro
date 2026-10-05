@@ -2,15 +2,18 @@
 import { getImage } from 'astro:assets';
 import { getCollection, getEntry } from 'astro:content';
 import Authors from './Authors.astro';
-import LineArt from './LineArt.astro';
 import Publications from './Publications.astro';
+import ResearchMedia from './ResearchMedia.astro';
 import SectionTitle from './SectionTitle.astro';
 
 const site = (await getEntry('site', 'site'))!.data;
 const entries = (await getCollection('research')).sort((a, b) => a.data.order - b.data.order);
-// Video media (Task 19): the poster shows until the video plays.
-const posters = await Promise.all(
-  entries.map(({ data }) => ('video' in data.media ? getImage({ src: data.media.poster, format: 'webp', width: 1080 }) : null)),
+// Each video's poster, or the photo, at its delivery sizes (see ResearchMedia).
+const stills = await Promise.all(
+  entries.map(({ data: { media } }) => {
+    const src = 'video' in media ? media.poster : 'image' in media ? media.image : null;
+    return src ? getImage({ src, format: 'webp', widths: [540, 1080] }) : null;
+  }),
 );
 const LINKS = [
   ['paper', 'Paper'],
@@ -29,11 +32,7 @@ const LINKS = [
           {
             entries.map(({ data }, i) => (
               <div class:list={['rs-item', { on: i === 0 }]} data-cap={data.media.caption}>
-                {'art' in data.media ? (
-                  <LineArt kind={data.media.art} uid={`rs-${i}`} />
-                ) : (
-                  <video src={data.media.video} poster={posters[i]?.src} muted loop playsinline preload="none" />
-                )}
+                <ResearchMedia media={data.media} still={stills[i]} uid={`rs-${i}`} />
               </div>
             ))
           }
@@ -46,11 +45,7 @@ const LINKS = [
             <article class="rs-entry" data-media={i}>
               <figure class="entry-media">
                 <div class="entry-frame">
-                  {'art' in data.media ? (
-                    <LineArt kind={data.media.art} uid={`rs-inline-${i}`} />
-                  ) : (
-                    <video src={data.media.video} poster={posters[i]?.src} muted loop playsinline preload="none" />
-                  )}
+                  <ResearchMedia media={data.media} still={stills[i]} uid={`rs-inline-${i}`} />
                 </div>
                 <figcaption class="entry-cap">{data.media.caption}</figcaption>
               </figure>
@@ -86,8 +81,11 @@ const LINKS = [
 </section>
 
 <script>
+  import { initDeferredImages, initInlineVideos } from '../scripts/media';
   import { initPinned } from '../scripts/pinned';
   initPinned({ entries: '.rs-entry', panel: '#rsMedia', key: 'media', caption: '#rsCap' });
+  initDeferredImages('.stack img[data-src]');
+  initInlineVideos('.entry-media video');
 </script>
 
 <style>

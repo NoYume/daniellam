@@ -7,6 +7,7 @@ summary: An OpenCV heads-up display that shows teleoperators each object's live 
 links:
   website: https://robin-lab.cs.utexas.edu/oopsieverse/
 media:
-  art: hud
-  caption: Heads-up display.
+  video: /videos/damage-hud.mp4
+  poster: ../../assets/research/damage-hud.jpg
+  caption: 'Damage-aware data collection. Video: RobIn Lab'
 ---
