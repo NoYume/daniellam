@@ -55,4 +55,4 @@ The same script adds hero photos (`bun run photo <file> hero`, then an entry in 
 
 ## Contact
 
-danielwlam.com (coming soon) · daniel.wingchi.lam@gmail.com · [LinkedIn](https://linkedin.com/in/danielwlam)
+[danielwlam.com](https://www.danielwlam.com/) · daniel.wingchi.lam@gmail.com · [LinkedIn](https://linkedin.com/in/danielwlam)
