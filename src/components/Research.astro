@@ -108,6 +108,8 @@ const LINKS = [
     border-radius: var(--r);
     overflow: hidden;
     background: var(--surface);
+    /* A drawing's solids fill with this frame's surface, not the page's. */
+    --la-surface: var(--surface);
     border: 1px solid var(--line);
   }
   .rs-item {
@@ -233,6 +235,7 @@ const LINKS = [
       border-radius: var(--r);
       overflow: hidden;
       background: var(--surface);
+      --la-surface: var(--surface);
       border: 1px solid var(--line);
     }
     .entry-frame > :global(*) {

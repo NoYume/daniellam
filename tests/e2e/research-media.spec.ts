@@ -108,3 +108,27 @@ test.describe('without JavaScript', () => {
     }
   });
 });
+
+test("line-art fills match a research frame's surface", async ({ page, isMobile }) => {
+  await page.goto('/');
+  // No research entry uses a drawing today, so each frame borrows the pour from Experience's panel. A solid
+  // hides what lies behind it with a fill, which must be the frame's surface and not the page's. .rs-media
+  // paints its surface at every width; .entry-frame only in the phone layout (900px and narrower), and has
+  // none on laptops, where its figure is hidden.
+  for (const frame of isMobile ? ['.rs-media', '.entry-frame'] : ['.rs-media']) {
+    const { fill, frameBg, pageBg } = await page.evaluate((selector) => {
+      const art = document.querySelector('#exArt svg[data-art="pour"]')!.cloneNode(true) as SVGSVGElement;
+      const target = document.querySelector(selector)!;
+      target.append(art);
+      const paint = (el: Element, property: string) => getComputedStyle(el).getPropertyValue(property);
+      return {
+        fill: paint(art.querySelector('path[style*="--la-bg"]')!, 'fill'),
+        frameBg: paint(target, 'background-color'),
+        pageBg: paint(document.documentElement, 'background-color'),
+      };
+    }, frame);
+    expect(fill, `${frame}: a solid's fill`).toBe(frameBg);
+    // Were the two the same, the fill could match without the frame's surface being used.
+    expect(frameBg, `${frame}: the frame's surface`).not.toBe(pageBg);
+  }
+});

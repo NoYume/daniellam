@@ -30,16 +30,24 @@ const html = className ? svg.replace('<svg ', `<svg class="${className}" `) : sv
     stroke-opacity: var(--base-op);
     stroke-width: 1.1;
   }
-  /* Solids hide what lies behind them with a fill of the page background
-     (drawings spec 4.3). It fades with the page while the mode switches. */
+  /* Solids hide what lies behind them with a fill of the surface they sit on
+     (drawings spec 4.3): the page background, or the surface of a frame that
+     sets --la-surface (Research's media frames). On the page the fill fades
+     with the background while the mode switches. */
   svg[data-art] {
-    --la-bg: var(--bg);
+    --la-bg: var(--la-surface, var(--bg));
   }
   html.mode-switch .la-base {
     transition: fill 0.4s ease;
   }
+  .la-dot {
+    fill: var(--text);
+    fill-opacity: 0.35;
+  }
   /* Forced colors repaint the page background but not SVG fills, so the fills
-     follow it, and the base strokes take the forced text color. */
+     follow it, and the base strokes and dots take the forced text color. This
+     block stays below the plain rules it overrides: they have the same
+     specificity, so the later one wins. */
   @media (forced-colors: active) {
     svg[data-art] {
       --la-bg: Canvas;
@@ -47,10 +55,9 @@ const html = className ? svg.replace('<svg ', `<svg class="${className}" `) : sv
     .la-base {
       stroke: CanvasText;
     }
-  }
-  .la-dot {
-    fill: var(--text);
-    fill-opacity: 0.35;
+    .la-dot {
+      fill: CanvasText;
+    }
   }
   .la-flow {
     fill: none;

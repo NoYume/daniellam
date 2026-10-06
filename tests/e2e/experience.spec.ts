@@ -94,4 +94,20 @@ test.describe('under forced colors', () => {
     expect(fill).toBe(bg);
     expect(fill).not.toBe('rgb(14, 15, 17)');
   });
+
+  test('under forced colors, dots and strokes take the forced text color', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'forced colors emulation is Chromium only');
+    // Dark mode saved: the drawing's own text color is ivory, which would vanish on a light high-contrast page.
+    await page.addInitScript(() => localStorage.setItem('mode', 'dark'));
+    await page.emulateMedia({ forcedColors: 'active' });
+    await page.goto('/');
+    const paint = (selector: string, property: string) =>
+      page
+        .locator(`#exArt svg[data-art="rooftops"] ${selector}`)
+        .first()
+        .evaluate((el, p) => getComputedStyle(el).getPropertyValue(p), property);
+    const text = await page.evaluate(() => getComputedStyle(document.documentElement).color);
+    expect(await paint('.la-dot', 'fill'), "a roof marker's fill").toBe(text);
+    expect(await paint('.la-base', 'stroke'), "a base stroke's color").toBe(text);
+  });
 });
