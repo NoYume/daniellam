@@ -23,16 +23,23 @@ export function initDeferredImages(selector: string): void {
 }
 
 /**
- * Each video inside an entry plays while it is on screen, never under reduced
- * motion. Its preload="none" keeps the file from downloading until the first play.
+ * Plays a clip, giving it its address (data-src) on the first play, so the file
+ * never downloads before then. preload="none" alone is only a hint: WebKit on
+ * Linux fetched the clips with the page anyway.
  */
+export function playClip(video: HTMLVideoElement): void {
+  if (!video.src && video.dataset.src) video.src = video.dataset.src;
+  video.play().catch(() => {});
+}
+
+/** Each video inside an entry plays while it is on screen, never under reduced motion. */
 export function initInlineVideos(selector: string): void {
   const videos = Array.from(document.querySelectorAll<HTMLVideoElement>(selector));
   if (videos.length === 0) return;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const onScreen = new Set<HTMLVideoElement>();
   const sync = (video: HTMLVideoElement) => {
-    if (onScreen.has(video) && !reduce.matches) video.play().catch(() => {});
+    if (onScreen.has(video) && !reduce.matches) playClip(video);
     else video.pause();
   };
   const observer = new IntersectionObserver(

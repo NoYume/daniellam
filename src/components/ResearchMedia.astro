@@ -1,9 +1,10 @@
 ---
 // One research entry's media, in the pinned panel and, on phones, inside the
 // entry: a line-art drawing, a video on its poster, or a photo. Posters and
-// photos get their address from media.ts near view (an img src or a poster
-// attribute would load with the page, competing with the hero); the noscript
-// copy shows them without JavaScript.
+// photos get their address from media.ts near view, and clips at their first
+// play (an img src or a poster attribute would load with the page, competing
+// with the hero, and so would a video src wherever preload="none" is ignored);
+// the noscript copy shows the stills without JavaScript.
 import type { GetImageResult } from 'astro';
 import type { CollectionEntry } from 'astro:content';
 import LineArt from './LineArt.astro';
@@ -30,7 +31,7 @@ const alt = 'image' in media ? media.alt : '';
       <noscript>
         <img src={still?.src} srcset={still?.srcSet.attribute} sizes={sizes} alt="" />
       </noscript>
-      {'video' in media && <video src={media.video} muted loop playsinline preload="none" />}
+      {'video' in media && <video data-src={media.video} muted loop playsinline preload="none" />}
     </div>
   )
 }

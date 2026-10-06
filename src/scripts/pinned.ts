@@ -1,6 +1,8 @@
 // A pinned panel that follows the entry crossing the middle of the screen:
 // Research's media and Experience's drawings. Videos play only while their
 // entry is active and the panel is on screen.
+import { playClip } from './media';
+
 export function initPinned(opts: { entries: string; panel: string; key: string; caption?: string }): void {
   const panel = document.querySelector<HTMLElement>(opts.panel);
   if (!panel) return;
@@ -15,7 +17,7 @@ export function initPinned(opts: { entries: string; panel: string; key: string; 
     items.forEach((item, i) => {
       const video = videoOf(item);
       if (!video) return;
-      if (i === active && panelVisible && !reduce.matches) video.play().catch(() => {});
+      if (i === active && panelVisible && !reduce.matches) playClip(video);
       else video.pause();
     });
   };

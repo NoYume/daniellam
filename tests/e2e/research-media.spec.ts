@@ -32,7 +32,7 @@ test('no clip, poster or photo downloads with the page', async ({ page }) => {
   await page.goto('/');
   await page.waitForLoadState('networkidle');
   const deferred = await page.evaluate(() => [
-    ...Array.from(document.querySelectorAll<HTMLVideoElement>('.stack video'), (v) => new URL(v.src).pathname),
+    ...Array.from(document.querySelectorAll<HTMLVideoElement>('.stack video'), (v) => v.dataset.src!),
     ...Array.from(document.querySelectorAll<HTMLImageElement>('.stack img[data-src]'), (img) => [
       img.dataset.src!,
       ...img.dataset.srcset!.split(',').map((candidate) => candidate.trim().split(/\s+/)[0]),
@@ -40,6 +40,22 @@ test('no clip, poster or photo downloads with the page', async ({ page }) => {
   ]);
   expect(deferred.length).toBeGreaterThan(0);
   expect(deferred.filter((path) => requested.has(path))).toEqual([]);
+});
+
+test('no clip downloads with the page, even where preload="none" is ignored', async ({ page }) => {
+  // preload="none" is only a hint: WebKit on Linux fetched both clips with the page anyway. The page,
+  // served with preload="auto", stands in for such a browser.
+  await page.route('/', async (route) => {
+    const response = await route.fetch();
+    await route.fulfill({ response, body: (await response.text()).replaceAll('preload="none"', 'preload="auto"') });
+  });
+  const clips = new Set<string>();
+  page.on('request', (request) => {
+    if (isClip(request.url())) clips.add(new URL(request.url()).pathname);
+  });
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+  expect([...clips]).toEqual([]);
 });
 
 test('a clip downloads only once its entry is on screen', async ({ page, isMobile }) => {
@@ -50,7 +66,7 @@ test('a clip downloads only once its entry is on screen', async ({ page, isMobil
   await page.goto('/');
   await page.waitForLoadState('networkidle');
   expect([...clips]).toEqual([]);
-  const first = await media(page, isMobile, 0, 'video').evaluate((v: HTMLVideoElement) => new URL(v.src).pathname);
+  const first = await media(page, isMobile, 0, 'video').evaluate((v: HTMLVideoElement) => v.dataset.src!);
   await center(page, isMobile, 0);
   await expect.poll(() => [...clips]).toEqual([first]);
 });
