@@ -8,5 +8,5 @@ summary: Mentoring 12 first- and second-year researchers; selected for a second 
 bullets:
   - Onboarded 3 undergraduate researchers onto my own project
   - Teaching rigid-body kinematics and motion planning through hands-on projects
-art: tree
+art: vla
 ---

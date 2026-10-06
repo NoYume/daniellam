@@ -24,7 +24,7 @@ test.describe('phones', () => {
     const research = page.locator('.rs-entry .entry-media');
     const experience = page.locator('.ex-entry .entry-media');
     await expect(research).toHaveCount(3);
-    await expect(experience).toHaveCount(5);
+    await expect(experience).toHaveCount(6);
     for (const media of [...(await research.all()), ...(await experience.all())]) await expect(media).toBeVisible();
     // The media sits above the entry's text.
     const first = page.locator('.ex-entry').first();
@@ -65,6 +65,6 @@ test('desktop keeps the pinned panels, without inline copies', async ({ page, is
   test.skip(isMobile, 'desktop layout');
   await page.goto('/');
   await expect(page.locator('.rs-sticky')).toBeVisible();
-  await expect(page.locator('.entry-media')).toHaveCount(8);
+  await expect(page.locator('.entry-media')).toHaveCount(9);
   for (const media of await page.locator('.entry-media').all()) await expect(media).toBeHidden();
 });

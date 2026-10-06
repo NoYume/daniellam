@@ -2,7 +2,7 @@
 order: 1
 title: An easy-but-risky benchmark
 media:
-  art: arm
+  art: pour
   caption: Robot arm.
 ---
 

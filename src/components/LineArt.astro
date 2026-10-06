@@ -30,6 +30,24 @@ const html = className ? svg.replace('<svg ', `<svg class="${className}" `) : sv
     stroke-opacity: var(--base-op);
     stroke-width: 1.1;
   }
+  /* Solids hide what lies behind them with a fill of the page background
+     (drawings spec 4.3). It fades with the page while the mode switches. */
+  svg[data-art] {
+    --la-bg: var(--bg);
+  }
+  html.mode-switch .la-base {
+    transition: fill 0.4s ease;
+  }
+  /* Forced colors repaint the page background but not SVG fills, so the fills
+     follow it, and the base strokes take the forced text color. */
+  @media (forced-colors: active) {
+    svg[data-art] {
+      --la-bg: Canvas;
+    }
+    .la-base {
+      stroke: CanvasText;
+    }
+  }
   .la-dot {
     fill: var(--text);
     fill-opacity: 0.35;
