@@ -29,7 +29,11 @@ function plainSubpaths(d: string): string[] | null {
 function distance(p: Point, a: Point, b: Point): number {
   const dx = b[0] - a[0], dy = b[1] - a[1], len2 = dx * dx + dy * dy;
   const t = len2 === 0 ? 0 : Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / len2));
-  return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy);
+  const ex = p[0] - a[0] - t * dx, ey = p[1] - a[1] - t * dy;
+  // Not Math.hypot: its last bit differs between engines (Bun writes the snapshots, Node builds the
+  // site), and an exact tie between two points must break the same way in both. Plain IEEE arithmetic
+  // is identical everywhere, and at coordinates of 0-600 the squares cannot overflow.
+  return Math.sqrt(ex * ex + ey * ey);
 }
 
 /** Ramer-Douglas-Peucker: the points worth keeping, both ends always among them. */

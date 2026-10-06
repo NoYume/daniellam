@@ -90,4 +90,18 @@ describe('thinning', () => {
       for (const [, d] of lineArt(k, 'x').matchAll(/ d="([^"]*)"/g))
         if (!/[^MLZ0-9.,\s-]/.test(d!)) expect(d).not.toMatch(/\d\.0(?!\d)/);
   });
+  test('thinning computes distances without Math.hypot', () => {
+    // Math.hypot's last bit differs between JavaScriptCore (Bun writes the snapshots) and V8 (Node builds the site).
+    const hypot = Math.hypot;
+    Math.hypot = () => {
+      throw new Error('thinning called Math.hypot');
+    };
+    try {
+      expect(thinPath('M0,0 L5,0.3 L10,0')).toBe('M0,0 L5,0.3 L10,0');
+      // A closed subpath simplifies as a loop whose two ends coincide: distance() to a zero-length segment.
+      expect(thinPath('M0,0 L1,0 L2,0 L2,2 Z')).toBe('M0,0 L2,0 L2,2 Z');
+    } finally {
+      Math.hypot = hypot;
+    }
+  });
 });
