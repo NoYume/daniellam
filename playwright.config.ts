@@ -24,6 +24,7 @@ export default defineConfig({
     command: 'bun run build && bun run preview --port 4322 --ignore-lock',
     port: 4322,
     reuseExistingServer: !process.env.CI,
-    timeout: 300_000,
+    // Every Shots photo adds ten image encodes to the build, and CI's runners are slower than a laptop.
+    timeout: 900_000,
   },
 });
