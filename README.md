@@ -34,22 +34,31 @@ Not built yet. The now-playing line in the hero comes with the music phase, from
 
 ## Shots photos
 
-The Shots page (coming later) and the row of photos on the homepage read from `src/content/shots.yaml`. A photo enters the repo only through the photo script, which turns it upright, caps the long edge at 3000px and removes all metadata, GPS included:
+The Shots page, at `/shots/`, and the row of photos on the homepage read from `src/content/shots.yaml`: one entry per trip, newest first. A photo enters the repo only through the photo script, which turns it upright, caps the long edge at 3000px and removes all metadata, GPS included. Give it a folder with one trip's photos and it prepares every JPEG and PNG in it, in name order, then prints a `photos:` block:
 
 ```bash
-bun run photo ~/Pictures/ferry.jpg shots ferry  # writes src/assets/shots/ferry.jpg
+bun run photo photos/shots/tokyo shots/tokyo  # writes src/assets/shots/tokyo/ and prints the block
 ```
 
-Then add it to `shots.yaml`:
+Paste the block under a new trip entry, fill in each `alt`, then add the trip's `id` (a lowercase slug such as `tokyo`, which becomes its link, `/shots/#tokyo`), `name`, `month` and `note`:
 
 ```yaml
-- id: ferry
-  file: ../assets/shots/ferry.jpg
-  alt: Morning ferry crossing the harbor
-  place: Hong Kong # optional, like date and caption
-  mine: true # my own photo; anyone else's needs a credit instead
-  teaser: true # shows it in the homepage row, which fits four
+- id: tokyo # a lowercase slug; the trip's link is /shots/#tokyo
+  name: Tokyo # up to 24 characters
+  month: 2026-03
+  note: Rain most nights, so the trains did the work. # optional, up to 70 characters
+  mine: true # my photos; a photo by someone else gets its own credit
+  photos:
+    - file: ../assets/shots/tokyo/shinjuku.jpg # the first photo is the cover, and must be landscape
+      alt: Shinjuku street at night in the rain
+      caption: Shinjuku on a rainy night # optional, up to 60 characters
+      teaser: true # exactly four photos in all fill the homepage row
+    - file: ../assets/shots/tokyo/alley.jpg
+      alt: A narrow alley in the rain
+      credit: A friend # a photo I didn't take
 ```
+
+`mine: true` goes on a whole trip or on a single photo; a photo by anyone else takes a `credit` instead.
 
 The same script adds hero photos (`bun run photo <file> hero`, then an entry in `hero.yaml`) and the headshot (`bun run photo <file> people headshot`, then `headshot` in `about.md`). Never put photos in `public/`: files there are served as they are, metadata and all.
 
