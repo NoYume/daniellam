@@ -16,6 +16,14 @@ test.describe('phones', () => {
         expect(widths.scroll).toBeLessThanOrEqual(widths.client);
         expect(widths.client).toBeLessThanOrEqual(390);
       });
+
+      test('the shots page has no horizontal scroll', async ({ page }) => {
+        await page.goto('/shots/');
+        await page.evaluate(() => document.fonts.ready);
+        const widths = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }));
+        expect(widths.scroll).toBeLessThanOrEqual(widths.client);
+        expect(widths.client).toBeLessThanOrEqual(390);
+      });
     });
   }
 

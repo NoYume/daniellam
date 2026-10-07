@@ -1,3 +1,43 @@
-- id: uncredited
-  file: ../assets/shots/gps.jpg
-  alt: A coast
+- id: older
+  name: Older
+  month: 2024-01
+  mine: true
+  photos:
+    - file: ../assets/shots/gps.jpg
+      alt: A street
+      teaser: true
+- id: newer
+  name: A name that runs past the limit
+  month: 2025-06
+  note: A note that goes on and on, well past the seventy characters a note may use.
+  photos:
+    - file: ../assets/shots/wide.jpg
+      credit: Someone Else
+    - file: ../assets/shots/wide.jpg
+      alt: A coast
+    - file: ../assets/shots/wide.jpg
+      alt: A coast
+      mine: true
+      credit: Someone Else
+    - file: ../assets/shots/wide.jpg
+      alt: A coast
+      credit: Someone Else
+      caption: A caption that keeps on going, well past the sixty characters
+- id: Bad_Id
+  name: Bad id
+  month: 2023-5
+  mine: true
+  photos:
+    - file: ../assets/shots/tall.jpg
+      alt: A tower
+- id: empty
+  name: Empty
+  month: 2022-01
+  photos: []
+- id: older
+  name: Twice
+  month: 2021-01
+  mine: true
+  photos:
+    - file: ../assets/shots/wide.jpg
+      alt: A field

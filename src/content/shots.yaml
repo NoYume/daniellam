@@ -1,23 +1,73 @@
-# Photos for the Shots row (teaser: true) and, later, the Shots page.
-# Add a photo with `bun run photo <file> shots`. Set `mine: true` on your own
-# photos; anyone else's need a `credit`. These four are credited stand-ins.
-- id: n12
-  file: ../assets/shots/n12.jpg
-  alt: Station platform at dusk
-  credit: taro ohtani
-  teaser: true
-- id: p1047
-  file: ../assets/shots/p1047.jpg
-  alt: Brick alley
-  credit: sergee bee
-  teaser: true
-- id: n11
-  file: ../assets/shots/n11.jpg
-  alt: Rainy alley in Shinjuku
-  credit: Intrepid (@intrepidfilm)
-  teaser: true
-- id: p1050
-  file: ../assets/shots/p1050.jpg
-  alt: Coastline
-  credit: Joseph Barrientos
-  teaser: true
+# One entry per trip, newest first (trips in the same month can go in any order).
+# `id` is a lowercase slug that doubles as the trip's link, and `month` is YYYY-MM.
+# The first photo is the trip's cover and must be landscape.
+# Limits: a name is at most 24 characters, a note 70 and a caption 60.
+# Exactly four photos in all are `teaser: true`: they fill the homepage's Shots row.
+# `credit` goes on anyone else's photo. `mine: true` on a trip, or on a single photo,
+# says it's yours and needs no credit (a photo can't say both `mine: true` and `credit`).
+# Adding a trip: `bun run photo photos/shots/<trip> shots/<trip>`, paste the `photos:`
+# block it prints under a new entry, add its `id`, `name` and `month`, fill in each `alt`.
+# These three trips are credited Unsplash stand-ins. Their months and notes are made up.
+- id: tokyo
+  name: Tokyo
+  month: 2026-03
+  note: Rain most nights, so the trains and the station lights did the work.
+  photos:
+    - file: ../assets/hero/n1.jpg
+      alt: Shinjuku street at night in the rain, lined with lit signs
+      caption: Shinjuku on a rainy night
+      credit: Pema G. Lama
+    - file: ../assets/shots/u6-p.jpg
+      alt: Looking up at Tokyo towers
+      caption: Looking up between the towers
+      credit: Shunya Koide
+    - file: ../assets/shots/n11.jpg
+      alt: Rainy alley in Shinjuku
+      caption: An alley in Shinjuku, in the rain
+      credit: Intrepid (@intrepidfilm)
+    - file: ../assets/shots/n12.jpg
+      alt: Station platform at dusk
+      caption: Ochanomizu Station at dusk
+      credit: taro ohtani
+      teaser: true
+    - file: ../assets/shots/u7-p.jpg
+      alt: A quiet Tokyo side street with power lines and brick houses
+      caption: A quiet street
+      credit: Emil Karlsson
+      teaser: true
+    - file: ../assets/hero/u13.jpg
+      alt: An overcast residential street in Tokyo
+      caption: A residential street on an overcast day
+      credit: Tsuyoshi Kozu
+- id: hong-kong-shanghai
+  name: Hong Kong and Shanghai
+  month: 2025-12
+  note: Minibuses in Mong Kok, then Shanghai through a bus window.
+  photos:
+    - file: ../assets/hero/n2.jpg
+      alt: Red minibuses on a busy Mong Kok street at night
+      caption: Red minibuses in Mong Kok
+      credit: Anastasia Zanko
+      teaser: true
+    - file: ../assets/shots/n10-p.jpg
+      alt: Neon signs over a wet Hong Kong street at night
+      caption: Neon on a wet street, Hong Kong
+      credit: Nic Low
+    - file: ../assets/hero/n8.jpg
+      alt: City lights through a rainy bus window in Shanghai
+      caption: Rain on a bus window, Shanghai
+      credit: Phykro Lee
+    - file: ../assets/hero/n5.jpg
+      alt: Shanghai towers lit up at night
+      caption: The Shanghai skyline at night
+      credit: Zhou Xian
+- id: chicago
+  name: Chicago
+  month: 2025-04
+  note: A weekend downtown.
+  photos:
+    - file: ../assets/hero/p1067.jpg
+      alt: Chicago skyline from above at sunset
+      caption: Downtown Chicago
+      credit: Kevin Young
+      teaser: true

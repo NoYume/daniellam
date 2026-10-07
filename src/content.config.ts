@@ -36,7 +36,7 @@ const site = defineCollection({
       scholar: z.url().optional(),
       resume: z.string(),
     }),
-    subtitles: z.object({ research: z.string(), experience: z.string(), projects: z.string(), shots: z.string() }),
+    subtitles: z.object({ research: z.string(), experience: z.string(), projects: z.string(), shots: z.string(), shotsPage: z.string() }),
     description: z.string(),
   }),
 });
@@ -122,19 +122,30 @@ const projects = defineCollection({
   }),
 });
 
+// One entry per trip, with its photos inside; the first photo is the cover. The lengths and the
+// month format repeat rule 7 of scripts/check-content.ts, which words the problems: keep them in step.
 const shots = defineCollection({
   loader: orderedFile('src/content/shots.yaml'),
   schema: ({ image }) =>
     z.object({
       position,
-      file: image(),
-      alt: z.string(),
-      place: z.string().optional(),
-      date: z.coerce.string().optional(),
-      caption: z.string().optional(),
-      credit: z.string().optional(),
+      name: z.string().min(1).max(24),
+      // 2026-03. A stray number is read as text, so the regex rejects it with the format, not a type error.
+      month: z.coerce.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/),
+      note: z.string().max(70).optional(),
       mine: z.boolean().default(false),
-      teaser: z.boolean().default(false),
+      photos: z
+        .array(
+          z.object({
+            file: image(),
+            alt: z.string().min(1),
+            caption: z.string().max(60).optional(),
+            credit: z.string().optional(),
+            mine: z.boolean().default(false),
+            teaser: z.boolean().default(false),
+          }),
+        )
+        .min(1),
     }),
 });
 

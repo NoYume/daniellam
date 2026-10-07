@@ -1,0 +1,148 @@
+---
+import CaretLeft from '@phosphor-icons/core/light/caret-left-light.svg';
+import CaretRight from '@phosphor-icons/core/light/caret-right-light.svg';
+import X from '@phosphor-icons/core/light/x-light.svg';
+---
+
+<!-- The photo viewer (spec 5.2). viewer.ts fills it with the clicked photo's own picture, its caption and its place in the trip. -->
+<dialog id="viewer" class="viewer" aria-label="Photo viewer">
+  <button class="v-btn v-prev" type="button" aria-label="Previous photo"><CaretLeft width={20} height={20} aria-hidden="true" /></button>
+  <figure class="v-fig">
+    <div class="v-photo"></div>
+    <figcaption aria-live="polite"><span class="v-cap"></span>{' '}<span class="v-count"></span></figcaption>
+  </figure>
+  <button class="v-btn v-next" type="button" aria-label="Next photo"><CaretRight width={20} height={20} aria-hidden="true" /></button>
+  <button class="v-btn v-close" type="button" aria-label="Close"><X width={20} height={20} aria-hidden="true" /></button>
+</dialog>
+
+<script>
+  import { initViewer } from '../scripts/viewer';
+  initViewer();
+</script>
+
+<style>
+  /* The whole screen, the page showing faintly through. The color and the blur are on the dialog
+     itself, and ::backdrop stays transparent: some browsers don't pass custom properties to it. */
+  .viewer {
+    /* The height the photo leaves for the padding, the gap and the caption: 150px on laptops (spec 5.2). */
+    --v-room: 150px;
+    position: fixed;
+    inset: 0;
+    width: auto;
+    height: auto;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    border: 0;
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 64px 1fr 64px;
+    align-items: center;
+    gap: 12px;
+    color: var(--text);
+    background: color-mix(in srgb, var(--bg) 96%, transparent);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+  .viewer:not([open]) {
+    display: none;
+  }
+  .viewer::backdrop {
+    background: transparent;
+  }
+  /* The page underneath stays where it is. */
+  :global(html.v-open) {
+    overflow: hidden;
+  }
+
+  .v-fig {
+    display: grid;
+    justify-items: center;
+    gap: 14px;
+    min-width: 0;
+  }
+  /* The photo's row spans the column, so a click beside a narrow photo closes the viewer. Sideways
+     moves go to viewer.ts, for swipes. */
+  .v-photo {
+    justify-self: stretch;
+    touch-action: pan-y pinch-zoom;
+  }
+  .v-photo :global(picture) {
+    display: contents;
+  }
+  /* As large as fits, at the photo's shape (--ar, set by viewer.ts): it takes its size at once,
+     before the larger file arrives. */
+  .v-photo :global(img) {
+    width: min(100%, (100dvh - var(--v-room)) * var(--ar));
+    height: auto;
+    max-height: calc(100dvh - var(--v-room));
+    margin-inline: auto;
+    object-fit: contain;
+    border-radius: 6px;
+  }
+  .v-fig figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px 24px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--muted);
+    text-align: center;
+  }
+  /* A photo with neither caption nor credit: the counter alone, centered. */
+  .v-cap:empty {
+    display: none;
+  }
+
+  .v-btn {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--line-2);
+    border-radius: 50%;
+    background: none;
+    color: var(--text-2);
+    cursor: pointer;
+  }
+  .v-btn:is(:hover, :focus-visible) {
+    color: var(--hi);
+    border-color: var(--text-2);
+  }
+  .v-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+  }
+  /* Laptops: previous and next mirror each other, 24px from their edges, and close sits right above next. */
+  @media (width > 640px) {
+    .v-next {
+      justify-self: end;
+    }
+    .v-close {
+      right: 24px;
+    }
+  }
+
+  /* Phones: the photo takes the full width, with previous and next centered below it. */
+  @media (width <= 640px) {
+    .viewer {
+      /* 64 + 84 padding, the 14px gap and up to three caption lines, with a little to spare. */
+      --v-room: 232px;
+      grid-template-columns: 1fr;
+      padding: 64px 12px 84px;
+    }
+    .v-prev,
+    .v-next {
+      position: absolute;
+      bottom: 20px;
+    }
+    .v-prev {
+      left: calc(50% - 54px);
+    }
+    .v-next {
+      left: calc(50% + 10px);
+    }
+  }
+</style>

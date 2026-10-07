@@ -25,5 +25,17 @@ for (const scheme of ['light', 'dark'] as const) {
       await page.goto('/nope');
       expect(await seriousViolations(page)).toEqual([]);
     });
+
+    test('shots page has no serious or critical axe violations', async ({ page }) => {
+      await page.goto('/shots/');
+      expect(await seriousViolations(page)).toEqual([]);
+    });
+
+    test('shots page with the viewer open has no serious or critical axe violations', async ({ page }) => {
+      await page.goto('/shots/');
+      await page.locator('a.ph-link').first().click();
+      await expect(page.locator('#viewer[open]')).toBeVisible();
+      expect(await seriousViolations(page)).toEqual([]);
+    });
   });
 }

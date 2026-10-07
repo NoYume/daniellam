@@ -33,6 +33,21 @@ test('robots, sitemap and images are served', async ({ request }) => {
   expect((await request.get('/apple-touch-icon.png')).status()).toBe(200);
 });
 
+test('the shots page has its own head', async ({ page }) => {
+  await page.goto('/shots/');
+  await expect(page).toHaveTitle('Shots · Daniel Lam');
+  const meta = (selector: string) => page.locator(`head ${selector}`).getAttribute('content');
+  expect(await meta('meta[property="og:title"]')).toBe('Shots · Daniel Lam');
+  expect(await meta('meta[name="description"]')).toBe('Travel and everyday photos, by trip.');
+  expect(await page.locator('head link[rel="canonical"]').getAttribute('href')).toMatch(/^http.*\/shots\/$/);
+});
+
+test('the sitemap lists the shots page', async ({ request }) => {
+  const sitemap = await request.get('/sitemap-0.xml');
+  expect(sitemap.status()).toBe(200);
+  expect(await sitemap.text()).toContain('/shots/</loc>');
+});
+
 test('the 404 page asks not to be indexed', async ({ page }) => {
   await page.goto('/nope');
   await expect(page.locator('head meta[name="robots"]')).toHaveAttribute('content', 'noindex');

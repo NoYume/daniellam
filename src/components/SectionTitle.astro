@@ -5,9 +5,12 @@ interface Props {
   title: string;
   /** Contact's larger title. */
   big?: boolean;
+  /** 1 on a page whose title this is (the Shots page); sections use 2. */
+  level?: 1 | 2;
 }
 
-const { zh, title, big = false } = Astro.props;
+const { zh, title, big = false, level = 2 } = Astro.props;
+const Heading = level === 1 ? 'h1' : 'h2';
 ---
 
-<h2 class={big ? 'contact-big' : 'sec-title'}><span class="cjk" lang="zh-Hant" aria-hidden="true">{zh}</span>{title}</h2>
+<Heading class={big ? 'contact-big' : 'sec-title'}><span class="cjk" lang="zh-Hant" aria-hidden="true">{zh}</span>{title}</Heading>

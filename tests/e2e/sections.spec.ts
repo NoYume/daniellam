@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { FIRST_NIGHT } from './fixtures';
 import { collectErrors, pinRandom } from './helpers';
+import { TRIPS } from './shots-data';
 
 test('shots are grayscale until hover', async ({ page, isMobile }) => {
   test.skip(isMobile, 'touch screens use the middle of the screen instead');
@@ -22,13 +23,33 @@ test('shots turn to color in the middle on touch', async ({ page, isMobile }) =>
   await expect(shot.locator('img')).toHaveCSS('filter', 'none');
 });
 
-test('shots row: four lazy photos, credited, no see-all link yet', async ({ page }) => {
+test('shots row: the four teasers, lazy and credited', async ({ page }) => {
+  // The first photo marked as a teaser, in page order.
+  const first = TRIPS.flatMap((trip) => trip.photos).find((photo) => photo.teaser)!;
   await page.goto('/');
   await expect(page.locator('#shots .shot img')).toHaveCount(4);
   await expect(page.locator('#shots .shot img').first()).toHaveAttribute('loading', 'lazy');
-  await expect(page.locator('#shots .shot img').first()).toHaveAttribute('alt', 'Station platform at dusk');
-  await expect(page.locator('#shots .shot figcaption').first()).toHaveText('Photo: taro ohtani');
-  await expect(page.getByText(/see all shots/i)).toHaveCount(0);
+  await expect(page.locator('#shots .shot img').first()).toHaveAttribute('alt', first.alt);
+  const caption = page.locator('#shots .shot').first().locator('figcaption');
+  if (first.credit) await expect(caption).toHaveText(`Photo: ${first.credit}`);
+  else await expect(caption).toHaveCount(0);
+});
+
+test('the shots row links to the shots page', async ({ page, isMobile }) => {
+  await page.goto('/');
+  const link = page.locator('#shots').getByRole('link', { name: 'See all shots' });
+  await expect(link).toHaveAttribute('href', '/shots/');
+  const box = (await link.boundingBox())!;
+  const subtitle = (await page.locator('#shots .sec-sub').boundingBox())!;
+  if (isMobile) {
+    expect(box.y, 'below the subtitle').toBeGreaterThanOrEqual(subtitle.y + subtitle.height);
+  } else {
+    const middle = box.y + box.height / 2;
+    expect(middle, 'on the subtitle line').toBeGreaterThanOrEqual(subtitle.y);
+    expect(middle, 'on the subtitle line').toBeLessThanOrEqual(subtitle.y + subtitle.height);
+  }
+  await link.click();
+  await expect(page.getByRole('heading', { level: 1, name: 'Shots' })).toBeVisible();
 });
 
 test.describe('in dark mode', () => {

@@ -1,0 +1,103 @@
+---
+import { getImage, Picture } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { captionText } from '../lib/shots';
+
+interface Props {
+  photo: CollectionEntry<'shots'>['data']['photos'][number];
+  /** A trip's first photo, at the page's full width, or one of its grid. */
+  kind: 'cover' | 'card';
+  /** The first trip's cover, which can sit at the fold. */
+  eager?: boolean;
+}
+
+const { photo, kind, eager = false } = Astro.props;
+// Covers span the screen; cards take a third of the 1280px column, or half the screen on phones.
+const SIZES = { cover: '100vw', card: '(max-width: 640px) 50vw, (max-width: 1424px) 30vw, 417px' };
+// The picture's largest size: 2400px wide, or the photo's own width when it's narrower. Its WebP is
+// the img's src and the link both, so neither adds a file (with no width, the src would be a full-size
+// extra). Without JavaScript, a click still opens the photo large.
+const width = Math.min(2400, photo.file.width);
+const large = await getImage({ src: photo.file, width, format: 'webp' });
+const caption = captionText(photo);
+---
+
+<figure class:list={['photo', kind]}>
+  <a class="ph-link" href={large.src}>
+    <Picture
+      src={photo.file}
+      alt={photo.alt}
+      formats={['avif']}
+      fallbackFormat="webp"
+      width={width}
+      widths={[480, 800, 1200, 1600, 2400]}
+      sizes={SIZES[kind]}
+      loading={eager ? 'eager' : 'lazy'}
+    />
+  </a>
+  {caption && <figcaption class:list={['cap', { wrap: kind === 'cover' }]}>{caption}</figcaption>}
+</figure>
+
+<style>
+  .ph-link {
+    display: block;
+    cursor: zoom-in;
+  }
+
+  /* The cover's height follows the screen's (spec 4.3): what is left once the solid bar (63px), the gap a
+     jump leaves under it (16px) and the room for the caption and the trip's heading (276px) are taken out,
+     so a jump shows the cover and the whole heading together. 62% of the width caps it on tall screens,
+     and a floor keeps it a photo on short ones. */
+  .cover :global(img) {
+    width: 100%;
+    height: clamp(220px, calc(100svh - 63px - 16px - 276px), 62vw);
+    object-fit: cover;
+  }
+  /* Drawn inside the photo: outside, a full-width outline would fall off the screen's edges. */
+  .cover .ph-link:focus-visible {
+    outline-offset: -3px;
+  }
+
+  /* Grid photos keep their own shape. */
+  .card {
+    break-inside: avoid;
+    margin-bottom: 28px;
+  }
+  .card .ph-link {
+    overflow: hidden;
+    border-radius: var(--r);
+  }
+  .card :global(img) {
+    width: 100%;
+    height: auto;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .card:hover :global(img) {
+    transform: scale(1.04);
+  }
+
+  /* "Caption. Photo: Credit", under every photo that has either. */
+  .cap {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--muted);
+    margin-top: 10px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card:hover :global(img) {
+      transform: none;
+    }
+  }
+
+  /* Phones: room for a longer heading under the cover, and tighter rows in the grid. */
+  @media (max-width: 640px) {
+    .cover :global(img) {
+      height: clamp(170px, calc(100svh - 63px - 16px - 300px), 80vw);
+    }
+    .card {
+      margin-bottom: 20px;
+    }
+  }
+</style>

@@ -1,26 +1,30 @@
 ---
+import ArrowRight from '@phosphor-icons/core/light/arrow-right-light.svg';
 import { Picture } from 'astro:assets';
 import { getEntry } from 'astro:content';
 import { getOrdered } from '../lib/content';
 import SectionTitle from './SectionTitle.astro';
 
 const site = (await getEntry('site', 'site'))!.data;
-const shots = (await getOrdered('shots')).filter((s) => s.data.teaser);
+// The photos marked `teaser: true`, in page order (the content check makes sure there are four).
+const photos = (await getOrdered('shots')).flatMap((trip) => trip.data.photos.filter((photo) => photo.teaser));
 ---
 
-<!-- No "See all" link until the Shots page exists (a later phase). -->
 <section id="shots">
   <div class="wrap">
     <SectionTitle zh="攝影" title="Shots" />
-    <p class="sec-sub shots-sub">{site.subtitles.shots}</p>
+    <div class="shots-head">
+      <p class="sec-sub shots-sub">{site.subtitles.shots}</p>
+      <a class="lt shots-all" href="/shots/">See all shots<ArrowRight aria-hidden="true" /></a>
+    </div>
     <div class="shots-row">
       {
-        shots.map(({ data }) => (
+        photos.map((photo) => (
           <figure class="shot">
             <div class="frame">
               <Picture
-                src={data.file}
-                alt={data.alt}
+                src={photo.file}
+                alt={photo.alt}
                 formats={['avif', 'webp']}
                 width={960}
                 widths={[480, 720, 960]}
@@ -28,7 +32,7 @@ const shots = (await getOrdered('shots')).filter((s) => s.data.teaser);
                 loading="lazy"
               />
             </div>
-            {!data.mine && data.credit && <figcaption>Photo: {data.credit}</figcaption>}
+            {photo.credit && <figcaption>Photo: {photo.credit}</figcaption>}
           </figure>
         ))
       }
@@ -42,8 +46,31 @@ const shots = (await getOrdered('shots')).filter((s) => s.data.teaser);
 </script>
 
 <style>
-  .shots-sub {
+  /* The subtitle, with "See all shots" at the right of its line (below it on phones). */
+  .shots-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 14px 40px;
     margin-bottom: 36px;
+  }
+  .shots-sub {
+    margin-bottom: 0;
+  }
+  .shots-all {
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: 14.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-2);
+  }
+  .shots-all :global(svg) {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    margin-left: 8px;
+    vertical-align: -0.14em;
   }
   /* Grayscale until hover (or, on touch screens, until the middle of the screen). */
   .shots-row {
@@ -83,6 +110,10 @@ const shots = (await getOrdered('shots')).filter((s) => s.data.teaser);
     }
   }
   @media (max-width: 900px) {
+    .shots-head {
+      flex-direction: column;
+      align-items: flex-start;
+    }
     .shots-row {
       grid-template-columns: 1fr 1fr;
     }

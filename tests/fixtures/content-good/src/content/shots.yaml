@@ -1,8 +1,26 @@
-- id: mine
-  file: ../assets/shots/clean.jpg
-  alt: A street
+- id: recent
+  name: Recent trip
+  month: 2025-06
+  note: A short note.
   mine: true
-- id: theirs
-  file: ../assets/shots/clean.jpg
-  alt: A coast
-  credit: Someone Else
+  photos:
+    - file: ../assets/shots/clean.jpg
+      alt: A street
+      caption: A street at night
+      teaser: true
+    - file: ../assets/shots/clean.jpg
+      alt: A coast
+      credit: A Friend
+      teaser: true
+- id: same-month
+  name: Same month
+  month: 2025-06
+  photos:
+    - file: ../assets/shots/clean.jpg
+      alt: A bridge
+      credit: Someone Else
+      teaser: true
+    - file: ../assets/shots/clean.jpg
+      alt: A river
+      mine: true
+      teaser: true

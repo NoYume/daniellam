@@ -2,12 +2,14 @@
 import ThemeButton from './ThemeButton.astro';
 
 interface Props {
-  /** Show the name from the start, for pages without a hero (the 404). */
+  /** Show the name from the start, for pages without a hero (the 404 and Shots pages). */
   docked?: boolean;
+  /** The page's own link (`shots` on the Shots page): it points at the page, marked current. */
+  current?: string;
 }
 
-const { docked = false } = Astro.props;
-// Links point at the homepage, so they also work from the 404 page.
+const { docked = false, current } = Astro.props;
+// Links point at the homepage, so they also work from the other pages.
 const SECTIONS = ['about', 'research', 'experience', 'projects', 'shots', 'contact'];
 ---
 
@@ -17,7 +19,15 @@ const SECTIONS = ['about', 'research', 'experience', 'projects', 'shots', 'conta
     <a class="bar-name" href="/#top">Daniel Lam</a>
     <div class="bar-right">
       <div class="bar-links">
-        {SECTIONS.map((id) => <a class="lt" href={`/#${id}`}>{id}</a>)}
+        {
+          SECTIONS.map((id) =>
+            id === current ? (
+              <a class="lt is-active" href={`/${id}/`} aria-current="page">{id}</a>
+            ) : (
+              <a class="lt" href={`/#${id}`}>{id}</a>
+            ),
+          )
+        }
       </div>
       <ThemeButton />
     </div>

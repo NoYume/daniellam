@@ -1,0 +1,79 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatMonth, photoCount } from '../lib/shots';
+import ShotsPhoto from './ShotsPhoto.astro';
+
+interface Props {
+  trip: CollectionEntry<'shots'>;
+  /** The page's first trip, whose cover loads eagerly. */
+  first?: boolean;
+}
+
+const { trip, first = false } = Astro.props;
+const { id, data } = trip;
+// The first photo is the cover; the rest fill the grid.
+const [cover, ...rest] = data.photos;
+// An article, not a section: base.css pads every `main section`, and the bar's scroll spy watches them.
+---
+
+<article class="trip" id={id} aria-labelledby={`${id}-name`}>
+  <ShotsPhoto photo={cover} kind="cover" eager={first} />
+  <div class="wrap">
+    <div class="trip-head">
+      <h2 class="trip-name" id={`${id}-name`}>{data.name}</h2>
+      <p class="trip-meta"><time datetime={data.month}>{formatMonth(data.month)}</time> · {photoCount(data.photos.length)}</p>
+      {data.note && <p class="trip-note">{data.note}</p>}
+    </div>
+    {
+      rest.length > 0 && (
+        <div class="grid">
+          {rest.map((photo) => (
+            <ShotsPhoto photo={photo} kind="card" />
+          ))}
+        </div>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  /* A jump lands the cover 16px under the solid bar (62px and its hairline). */
+  .trip {
+    margin-bottom: clamp(120px, 14vw, 210px);
+    scroll-margin-top: 79px;
+  }
+  .trip-head {
+    margin-top: 28px;
+  }
+  .trip-name {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(44px, 5.2vw, 84px);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .trip-meta {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin-top: 14px;
+  }
+  .trip-note {
+    font-size: 21px;
+    color: var(--text-2);
+    max-width: 44ch;
+    margin-top: 12px;
+  }
+  .grid {
+    columns: 3;
+    column-gap: 14px;
+    margin-top: 48px;
+  }
+  @media (max-width: 640px) {
+    .grid {
+      columns: 2;
+      column-gap: 10px;
+    }
+  }
+</style>

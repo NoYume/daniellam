@@ -1,0 +1,40 @@
+---
+import { getEntry } from 'astro:content';
+import Footer from '../components/Footer.astro';
+import Nav from '../components/Nav.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import ShotsIndex from '../components/ShotsIndex.astro';
+import Trip from '../components/Trip.astro';
+import Viewer from '../components/Viewer.astro';
+import Base from '../layouts/Base.astro';
+import { getOrdered } from '../lib/content';
+
+const site = (await getEntry('site', 'site'))!.data;
+// Newest first: the content check keeps the file in that order.
+const trips = await getOrdered('shots');
+---
+
+<Base title={`Shots · ${site.name}`} description={site.subtitles.shotsPage}>
+  <Nav docked current="shots" />
+  <main id="main" tabindex="-1">
+    <header class="wrap sh-head">
+      <SectionTitle zh="攝影" title="Shots" level={1} />
+      <p class="sec-sub">{site.subtitles.shotsPage}</p>
+      <ShotsIndex trips={trips} />
+    </header>
+    {trips.map((trip, i) => <Trip trip={trip} first={i === 0} />)}
+  </main>
+  <Footer />
+  <Viewer />
+</Base>
+
+<style>
+  /* The title starts below the bar's 76px, and the first trip well below the list. */
+  .sh-head {
+    padding-top: calc(76px + clamp(56px, 8vw, 120px));
+    margin-bottom: clamp(96px, 11vw, 160px);
+  }
+  .sec-sub {
+    margin-bottom: 56px;
+  }
+</style>

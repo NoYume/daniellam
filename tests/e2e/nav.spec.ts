@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { collectErrors } from './helpers';
+import { TRIPS } from './shots-data';
 
 test('bar turns solid after the first scroll', async ({ page }) => {
   await page.goto('/');
@@ -30,6 +31,35 @@ test('current section is underlined', async ({ page }) => {
   await page.locator('#research').evaluate((el) => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
   await expect(page.locator('.bar-links a[href$="#research"]')).toHaveClass(/\bis-active\b/);
   await expect(page.locator('.bar-links a.is-active')).toHaveCount(1);
+});
+
+test('on the shots page, shots is the current link', async ({ page }) => {
+  await page.goto('/shots/');
+  const current = page.locator('.bar-links a[aria-current="page"]');
+  await expect(current).toHaveText('shots');
+  await expect(current).toHaveAttribute('href', '/shots/');
+  await expect(current).toHaveClass(/\bis-active\b/);
+  const others = await page.locator('.bar-links a:not([aria-current])').evaluateAll((links) => links.map((a) => a.getAttribute('href')));
+  expect(others).toHaveLength(5);
+  for (const href of others) expect(href).toMatch(/^\/#[a-z]+$/);
+  await expect(page.locator('.bar')).toHaveClass(/\bdocked\b/);
+  // Further down the page (the second trip, or the only one), the mark stays.
+  await page.locator('article.trip').nth(TRIPS.length > 1 ? 1 : 0).scrollIntoViewIfNeeded();
+  await expect(page.locator('.bar-links a.is-active')).toHaveCount(1);
+  await expect(page.locator('.bar-links a.is-active')).toHaveText('shots');
+});
+
+test('on phones the shots page starts with its link in view', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'only phones scroll the bar links sideways');
+  await page.goto('/shots/');
+  await page.evaluate(() => document.fonts.ready);
+  const current = page.locator('.bar-links a[aria-current="page"]');
+  await expect(current).toHaveCount(1);
+  const row = (await page.locator('.bar-links').boundingBox())!;
+  const link = (await current.boundingBox())!;
+  expect(link.x, 'left edge').toBeGreaterThanOrEqual(row.x - 1);
+  expect(link.x + link.width, 'right edge').toBeLessThanOrEqual(row.x + row.width + 1);
+  expect(await page.evaluate(() => scrollY)).toBe(0);
 });
 
 test.describe('with a dark system setting', () => {

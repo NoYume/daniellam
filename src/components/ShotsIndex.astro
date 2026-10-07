@@ -1,0 +1,86 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatMonth, photoCount } from '../lib/shots';
+
+interface Props {
+  trips: CollectionEntry<'shots'>[];
+}
+
+const { trips } = Astro.props;
+---
+
+<nav class="tix" aria-label="Trips">
+  <ol>
+    {
+      trips.map(({ id, data }) => (
+        <li>
+          <a href={`#${id}`}>
+            <span class="tix-name"><span class="u">{data.name}</span></span>
+            <time class="tix-when" datetime={data.month}>{formatMonth(data.month)}</time>
+            <span class="tix-n">{photoCount(data.photos.length)}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+
+<style>
+  .tix ol {
+    list-style: none;
+  }
+  /* Rows like the Projects index: the name, the month and the count, on one baseline. */
+  .tix a {
+    display: grid;
+    grid-template-columns: 1fr auto 7.5em;
+    gap: 6px 40px;
+    align-items: baseline;
+    padding: 22px 0;
+    border-top: 1px solid var(--line);
+  }
+  .tix li:last-child a {
+    border-bottom: 1px solid var(--line);
+  }
+  .tix-name {
+    font-family: var(--font-serif);
+    font-size: clamp(26px, 2.3vw, 34px);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+  }
+  /* The underline is a background on the name's text, so a name that wraps gets a line under each
+     row. Hover and keyboard focus draw it in; it replaces the focus outline, as in Projects. */
+  .u {
+    background: linear-gradient(currentColor, currentColor) no-repeat;
+    background-size: 0 1px;
+    background-position: 100% calc(100% - 0.06em);
+    transition: background-size 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .tix a:is(:hover, :focus-visible) .u {
+    background-size: 100% 1px;
+    background-position: 0 calc(100% - 0.06em);
+  }
+  .tix a:focus-visible {
+    outline: none;
+  }
+  .tix-when,
+  .tix-n {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .tix-n {
+    text-align: right;
+  }
+
+  /* Phones: no count. */
+  @media (max-width: 640px) {
+    .tix a {
+      grid-template-columns: 1fr auto;
+      padding: 18px 0;
+    }
+    .tix-n {
+      display: none;
+    }
+  }
+</style>
